@@ -33,7 +33,9 @@ fun AppTheme(
 ) {
     val themeColor = if (isSystemInDarkTheme()) LightAppColors() else LightAppColors()
 
-    MaterialTheme() {
+    MaterialTheme(
+        colorScheme = AppTheme.colors.materialColors
+    ) {
         CompositionLocalProvider(
             LocalRippleTheme provides AppRippleTheme,
             LocalColors provides themeColor,

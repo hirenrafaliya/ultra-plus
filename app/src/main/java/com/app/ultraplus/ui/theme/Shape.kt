@@ -22,10 +22,11 @@ object Paddings {
 }
 
 object ItemPaddings {
-    val xxSmall: Dp = 8.dp
-    val xSmall: Dp = 12.dp
-    val small: Dp = 18.dp
-    val medium: Dp = 24.dp
-    val large: Dp = 32.dp
-    val xLarge: Dp = 46.dp
+    val xxSmall = 8
+    val xSmall= 12
+    val small = 18
+    val medium = 24
+    val large = 32
+    val xLarge = 46
+    val xxLarge = 56
 }

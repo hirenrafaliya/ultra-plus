@@ -29,6 +29,12 @@ class AppTypography {
         fontSize = 36.sp
     )
 
+    val bold24: TextStyle = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp
+    )
+
     val regular12: TextStyle = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Normal,
