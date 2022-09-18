@@ -3,6 +3,11 @@ package com.app.ultraplus.di
 import android.content.Context
 import android.content.res.Resources
 import com.app.ultraplus.App
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,4 +36,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideResources(application: App): Resources = application.resources
+
+    @Singleton
+    @Provides
+    fun provideFirebaseFireStore() : FirebaseFirestore = Firebase.firestore
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAuth() : FirebaseAuth = Firebase.auth
 }

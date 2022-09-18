@@ -1,4 +1,4 @@
-package com.app.ultraplus.composable
+package com.app.ultraplus.ui.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect

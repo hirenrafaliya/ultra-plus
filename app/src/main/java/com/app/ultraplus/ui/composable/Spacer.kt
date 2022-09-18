@@ -1,4 +1,4 @@
-package com.app.ultraplus.composable
+package com.app.ultraplus.ui.composable
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope

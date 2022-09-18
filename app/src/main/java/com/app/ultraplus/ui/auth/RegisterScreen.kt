@@ -1,5 +1,7 @@
 package com.app.ultraplus.ui.auth
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,13 +16,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
-import com.app.ultraplus.composable.AppButton
-import com.app.ultraplus.composable.AppTextField
-import com.app.ultraplus.composable.Spacer
+import com.app.ultraplus.network.model.User
+import com.app.ultraplus.ui.composable.AppButton
+import com.app.ultraplus.ui.composable.AppTextField
+import com.app.ultraplus.ui.composable.Spacer
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.viewmodel.AuthViewModel
+import com.app.ultraplus.viewmodel.RegisterUserState
 import com.google.firebase.annotations.PreviewApi
 
 @Composable
@@ -33,6 +37,7 @@ fun RegisterScreen(navHostController: NavHostController, viewModel: AuthViewMode
 @Composable
 fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthViewModel) {
     val userTypes = listOf("Area manager", "Reporting manager")
+    val TAG = "RegisterScreen-TAG"
 
     var userType by remember { mutableStateOf(userTypes[0]) }
     var name by remember { mutableStateOf("") }
@@ -42,9 +47,27 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    val onUserTypeChanged = { type: String -> userType = type }
-    val onRegisterClicked = {
+    val registerUserState by viewModel.registerUserStates.collectAsState()
+    when (registerUserState) {
+        is RegisterUserState.Loading -> {
 
+        }
+        is RegisterUserState.Success -> {
+            Log.d(TAG, "RegisterScreenPreview: Success ${((registerUserState as RegisterUserState.Success).user)}")
+        }
+        is RegisterUserState.Failure -> {
+            Log.d(TAG, "RegisterScreenPreview: Failure ${(registerUserState as RegisterUserState.Failure).error}")
+        }
+        else -> {}
+    }
+
+
+    val onUserTypeChanged = { type: String -> userType = type }
+    val onRegisterClicked: () -> Unit = {
+        val user =
+            User(userType = userType, userName = name, phoneNumber = phoneNumber, email = email, bio = bio, password = password)
+
+        viewModel.registerUser(user = user)
     }
 
     Box(

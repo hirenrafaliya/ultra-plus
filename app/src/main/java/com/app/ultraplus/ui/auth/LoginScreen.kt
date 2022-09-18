@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
-import com.app.ultraplus.composable.AppButton
-import com.app.ultraplus.composable.AppTextField
-import com.app.ultraplus.composable.Spacer
+import com.app.ultraplus.ui.composable.AppButton
+import com.app.ultraplus.ui.composable.AppTextField
+import com.app.ultraplus.ui.composable.Spacer
 import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings

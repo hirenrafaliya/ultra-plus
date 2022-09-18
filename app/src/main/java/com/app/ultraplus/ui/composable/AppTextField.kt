@@ -1,4 +1,4 @@
-package com.app.ultraplus.composable
+package com.app.ultraplus.ui.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
