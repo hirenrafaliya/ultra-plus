@@ -45,7 +45,7 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
         modifier = Modifier
             .fillMaxSize()
             .background(color = AppTheme.colors.WhitePrimary)
-            .padding(horizontal = Paddings.medium),
+            .padding(Paddings.medium),
         contentAlignment = Alignment.Center
     ) {
         Column(Modifier.fillMaxWidth()) {

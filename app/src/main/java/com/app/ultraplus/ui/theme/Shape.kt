@@ -16,6 +16,8 @@ class AppShape {
 internal val LocalShapes = staticCompositionLocalOf { AppShape() }
 
 object Paddings {
+    val xxSmall: Dp = 2.dp
+    val xSmall: Dp = 4.dp
     val small: Dp = 8.dp
     val medium: Dp = 12.dp
     val large: Dp = 18.dp
