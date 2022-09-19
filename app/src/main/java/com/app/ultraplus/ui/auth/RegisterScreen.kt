@@ -18,6 +18,7 @@ import com.app.ultraplus.network.model.User
 import com.app.ultraplus.ui.composable.AppButton
 import com.app.ultraplus.ui.composable.AppTextField
 import com.app.ultraplus.ui.composable.Spacer
+import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
@@ -50,8 +51,10 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
         val user =
             User(userType = userType, userName = name, phoneNumber = phoneNumber, email = email, bio = bio, password = password)
 
+        isLoading = true
         viewModel.registerUser(user = user, onSuccess = {
             isLoading = false
+            navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
         }, onFailure = {
             isLoading = false
         })

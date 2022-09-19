@@ -41,6 +41,12 @@ class AppTypography {
         fontSize = 12.sp
     )
 
+    val semiBold12: TextStyle = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp
+    )
+
     val semiBold15: TextStyle = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.SemiBold,

@@ -39,8 +39,10 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
     }
 
     val onLoginClicked: () -> Unit = {
+        isLoading = true
         viewModel.loginUser(email = email, password = password, onSuccess = {
             isLoading = false
+            navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
         }, onFailure = {
             isLoading = false
         })

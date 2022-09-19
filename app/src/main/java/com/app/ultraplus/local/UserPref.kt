@@ -4,15 +4,15 @@ import com.app.ultraplus.network.model.User
 import com.chibatching.kotpref.KotprefModel
 
 object UserPref : KotprefModel() {
-    var userId by stringPref()
-    var phoneNumber by stringPref()
-    var userName by stringPref()
-    var status by stringPref()
-    var userType by stringPref()
-    var fcmToken by stringPref()
-    var email by stringPref()
-    var bio by stringPref()
-    var assignedTo by stringPref()
+    private var userId by stringPref()
+    private var phoneNumber by stringPref()
+    private var userName by stringPref()
+    private var status by stringPref()
+    private var userType by stringPref()
+    private var fcmToken by stringPref()
+    private var email by stringPref()
+    private var bio by stringPref()
+    private var assignedTo by stringPref()
 
     fun setUser(user: User) {
         userId = user.userId
@@ -37,4 +37,6 @@ object UserPref : KotprefModel() {
         bio = bio,
         assignedTo = assignedTo
     )
+
+    fun isLoggedIn() = userId != ""
 }

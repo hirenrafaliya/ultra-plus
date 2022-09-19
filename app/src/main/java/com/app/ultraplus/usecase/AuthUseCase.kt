@@ -23,6 +23,7 @@ class AuthUseCase @Inject constructor(
         val newUser = user.copy(userId = firebaseUser.user?.uid!!, createdOn = Date())
 
         fireStore.collection(FsConstant.USER_CL).document(newUser.userId).set(newUser).await()
+        auth.signInWithEmailAndPassword(newUser.email, newUser.password).await()
         UserPref.setUser(newUser)
         onSuccess(newUser)
     }
@@ -32,8 +33,17 @@ class AuthUseCase @Inject constructor(
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val document =
                 fireStore.collection(FsConstant.USER_CL).document(result.user!!.uid).get().await()
-            if (document.exists()) UserPref.setUser(document.toObject(User::class.java)!!)
-            else onFailure(Constant.UNKNOWN_ERROR_TEXT)
+            if (document.exists()) {
+                UserPref.setUser(document.toObject(User::class.java)!!)
+                onSuccess()
+            }
+            else onFailure("Error 601 : User doesn't exist in DB")
         }
+
+    suspend fun fetchUser(userId: String, onSuccess: (User) -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
+        val document = fireStore.collection(FsConstant.USER_CL).document(userId).get().await()
+        if(document.exists()) onSuccess(document.toObject(User::class.java)!!)
+        else onFailure("Error 602 : User doesn't exist in DB")
+    }
 
 }

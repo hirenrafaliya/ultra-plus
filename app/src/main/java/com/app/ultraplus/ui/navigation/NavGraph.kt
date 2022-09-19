@@ -8,11 +8,14 @@ import androidx.navigation.compose.composable
 import com.app.ultraplus.ui.auth.LoginScreen
 import com.app.ultraplus.ui.auth.RegisterScreen
 import com.app.ultraplus.ui.auth.SplashScreen
+import com.app.ultraplus.ui.dashboard.main.MainScreen
 import com.app.ultraplus.viewmodel.AuthViewModel
+import com.app.ultraplus.viewmodel.MainViewModel
 
 @Composable
 fun SetUpNavGraph(navController: NavHostController) {
     val authViewModel = hiltViewModel<AuthViewModel>()
+    val mainViewModel = hiltViewModel<MainViewModel>()
 
     NavHost(
         navController = navController,
@@ -27,6 +30,9 @@ fun SetUpNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.RegisterScreen.route) {
             RegisterScreen(navHostController = navController, viewModel = authViewModel)
+        }
+        composable(route = Screen.MainScreen.route) {
+            MainScreen(navHostController = navController, viewModel = mainViewModel)
         }
     }
 }
