@@ -1,12 +1,14 @@
 package com.app.ultraplus.ui.dashboard.main
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
 import com.app.ultraplus.ui.dashboard.reimbursement.ReimbursementListContainer
+import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.viewmodel.MainViewModel
 import com.google.firebase.annotations.PreviewApi
@@ -32,9 +34,9 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
         BottomBar(currentSelected = currentSelected, onSelectionChanged = {
             currentSelected = it
         }, onAddFeedback = {
-
+            navHostController.navigate(Screen.AddFeedbackScreen.route)
         }, onAddReimbursement = {
-
+            navHostController.navigate(Screen.AddReimbursementScreen.route)
         })
     }
 }

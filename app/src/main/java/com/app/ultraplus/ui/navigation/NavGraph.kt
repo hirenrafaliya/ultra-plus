@@ -8,7 +8,9 @@ import androidx.navigation.compose.composable
 import com.app.ultraplus.ui.auth.LoginScreen
 import com.app.ultraplus.ui.auth.RegisterScreen
 import com.app.ultraplus.ui.auth.SplashScreen
+import com.app.ultraplus.ui.dashboard.feedback.AddFeedbackScreen
 import com.app.ultraplus.ui.dashboard.main.MainScreen
+import com.app.ultraplus.ui.dashboard.reimbursement.AddReimbursementScreen
 import com.app.ultraplus.viewmodel.AuthViewModel
 import com.app.ultraplus.viewmodel.MainViewModel
 
@@ -33,6 +35,12 @@ fun SetUpNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.MainScreen.route) {
             MainScreen(navHostController = navController, viewModel = mainViewModel)
+        }
+        composable(route = Screen.AddFeedbackScreen.route) {
+            AddFeedbackScreen(navHostController = navController, viewModel = mainViewModel)
+        }
+        composable(route = Screen.AddReimbursementScreen.route) {
+            AddReimbursementScreen(navHostController = navController, viewModel = mainViewModel)
         }
     }
 }
