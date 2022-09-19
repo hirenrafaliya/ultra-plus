@@ -1,7 +1,5 @@
 package com.app.ultraplus.ui.auth
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +22,6 @@ import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.viewmodel.AuthViewModel
-import com.app.ultraplus.viewmodel.RegisterUserState
 import com.google.firebase.annotations.PreviewApi
 
 @Composable
@@ -37,7 +34,6 @@ fun RegisterScreen(navHostController: NavHostController, viewModel: AuthViewMode
 @Composable
 fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthViewModel) {
     val userTypes = listOf("Area manager", "Reporting manager")
-    val TAG = "RegisterScreen-TAG"
 
     var userType by remember { mutableStateOf(userTypes[0]) }
     var name by remember { mutableStateOf("") }
@@ -46,20 +42,7 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
     var bio by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-
-    val registerUserState by viewModel.registerUserStates.collectAsState()
-    when (registerUserState) {
-        is RegisterUserState.Loading -> {
-
-        }
-        is RegisterUserState.Success -> {
-            Log.d(TAG, "RegisterScreenPreview: Success ${((registerUserState as RegisterUserState.Success).user)}")
-        }
-        is RegisterUserState.Failure -> {
-            Log.d(TAG, "RegisterScreenPreview: Failure ${(registerUserState as RegisterUserState.Failure).error}")
-        }
-        else -> {}
-    }
+    var isLoading by remember { mutableStateOf(false) }
 
 
     val onUserTypeChanged = { type: String -> userType = type }
@@ -67,7 +50,11 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
         val user =
             User(userType = userType, userName = name, phoneNumber = phoneNumber, email = email, bio = bio, password = password)
 
-        viewModel.registerUser(user = user)
+        viewModel.registerUser(user = user, onSuccess = {
+            isLoading = false
+        }, onFailure = {
+            isLoading = false
+        })
     }
 
     Box(
@@ -134,7 +121,7 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done)
             )
             Spacer(space = ItemPaddings.large)
-            AppButton(text = "Register as $userType +", onClick = onRegisterClicked)
+            AppButton(text = "Register as $userType +", isLoading = isLoading, onClick = onRegisterClicked)
         }
     }
 }

@@ -33,3 +33,5 @@ suspend fun <T> Task<T>.await(): T {
         }
     }
 }
+
+fun Exception.messageOrDefault() = this.message ?: Constant.UNKNOWN_ERROR_TEXT

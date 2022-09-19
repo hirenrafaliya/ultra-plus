@@ -11,6 +11,9 @@ abstract class AppColors {
     open val BluePrimary = Color(0xFF147EFB)
     open val BlueSecondary = Color(0xFF147EFB)
 
+    open val MidBluePrimary = Color(0xFF6DB0FF)
+    open val MidBlueSecondary = Color(0xFF97C7FF)
+
     open val LightBluePrimary = Color(0xFFE2EFFF)
     open val LightBlueSecondary = Color(0xFFF8FBFF)
 

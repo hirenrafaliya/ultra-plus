@@ -32,13 +32,18 @@ fun LoginScreen(navHostController: NavHostController, viewModel: AuthViewModel) 
 fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     val onRegisterClicked = {
         navHostController.navigate(Screen.RegisterScreen.route)
     }
 
-    val onLoginClicked = {
-
+    val onLoginClicked: () -> Unit = {
+        viewModel.loginUser(email = email, password = password, onSuccess = {
+            isLoading = false
+        }, onFailure = {
+            isLoading = false
+        })
     }
 
     Box(
@@ -67,7 +72,7 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
                 keyboardActions = KeyboardActions(onDone = { })
             )
             Spacer(ItemPaddings.xxLarge)
-            AppButton(text = "Login to Ultra Plus ->", onClick = onLoginClicked)
+            AppButton(text = "Login to Ultra Plus ->", onClick = onLoginClicked, isLoading = isLoading)
             Spacer(ItemPaddings.medium)
             Text(
                 modifier = Modifier.align(Alignment.End),

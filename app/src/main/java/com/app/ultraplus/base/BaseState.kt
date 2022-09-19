@@ -1,10 +1,6 @@
 package com.app.ultraplus.base
 
-import android.util.Log
-import com.app.ultraplus.util.await
-import com.google.android.gms.tasks.Task
-import java.io.IOException
-
+import com.app.ultraplus.util.messageOrDefault
 
 
 //suspend fun <T : Any> safeExecute(block: suspend () -> Task<T>): T = try {
@@ -13,3 +9,9 @@ import java.io.IOException
 //    Log.d(getTAG(), "safeExecute: $e")
 //    Failure(NetworkException("${e.message}"))
 //}
+
+suspend fun safeExecute(onFailure: (String) -> Unit, block: suspend () -> Unit) = try {
+    block()
+} catch (e: Exception) {
+    onFailure.invoke(e.messageOrDefault())
+}

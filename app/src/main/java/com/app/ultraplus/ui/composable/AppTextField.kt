@@ -27,7 +27,7 @@ fun AppTextField(
 
     @Composable
     fun getBorderColor() = TextFieldDefaults.outlinedTextFieldColors(
-        unfocusedBorderColor = AppTheme.colors.TextBlackSecondary,
+        unfocusedBorderColor = AppTheme.colors.MidBluePrimary,
         focusedBorderColor = AppTheme.colors.BluePrimary,
         focusedLabelColor = AppTheme.colors.BluePrimary,
         unfocusedLabelColor = AppTheme.colors.TextBlackSecondary,
