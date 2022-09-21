@@ -24,7 +24,8 @@ fun AppTextField(
     onTextChanged: (String) -> Unit,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    multiLine: Boolean = false
+    multiLine: Boolean = false,
+    enabled: Boolean = true
 ) {
 
     @Composable
@@ -51,6 +52,7 @@ fun AppTextField(
             .height(if (multiLine) Dp.Companion.Unspecified else 60.dp),
         textStyle = AppTheme.typography.semiBold15,
         keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions
+        keyboardActions = keyboardActions,
+        enabled = enabled
     )
 }

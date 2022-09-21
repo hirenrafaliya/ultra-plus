@@ -8,5 +8,6 @@ object Constant {
 object FsConstant {
     const val USER_CL = "users"
     const val FEEDBACK_CL = "feedbacks"
+    const val REIMBURSEMENT_CL = "reimbursements"
 }
 
