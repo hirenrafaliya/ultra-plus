@@ -45,22 +45,21 @@ fun AddFeedbackScreenPreview(navHostController: NavHostController, viewModel: Ma
 
     val onAddFeedbackClicked: () -> Unit = {
         val currentDate = Date()
-
-        val feedback = Feedback(
+        val fb = Feedback(
             shopName = shopName,
             ownerName = shopKeeperName,
             ownerNumber = shopKeeperNumber,
             shopAddress = address,
             city = city,
             pinCode = postalCode,
-            description = feedback,
+            description = feedback.replace("\\n", "<br />"),
             createdBy = UserPref.getUser().userId,
             updatedOn = currentDate,
             createdOn = currentDate,
             userName = UserPref.getUser().userName
         )
         isLoading = true
-        viewModel.addFeedback(feedback = feedback, onSuccess = {
+        viewModel.addFeedback(feedback = fb, onSuccess = {
             isLoading = false
             navHostController.popBackStack()
         }, onFailure = {

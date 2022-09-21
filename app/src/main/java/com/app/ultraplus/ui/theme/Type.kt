@@ -52,6 +52,24 @@ class AppTypography {
         fontWeight = FontWeight.SemiBold,
         fontSize = 15.sp
     )
+
+    val semiBold16: TextStyle = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    )
+
+    val semiBold22: TextStyle = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 22.sp
+    )
+
+    val bold22: TextStyle = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
+    )
 }
 
 internal val LocalTypography = staticCompositionLocalOf { AppTypography() }

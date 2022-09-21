@@ -3,6 +3,8 @@ package com.app.ultraplus.util
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.coroutines.resumeWithException
 
 suspend fun <T> Task<T>.await(): T {
@@ -35,3 +37,5 @@ suspend fun <T> Task<T>.await(): T {
 }
 
 fun Exception.messageOrDefault() = this.message ?: Constant.UNKNOWN_ERROR_TEXT
+
+fun Date.inDisplayFormat(): String = SimpleDateFormat("dd MMMM HH:mm a").format(this)

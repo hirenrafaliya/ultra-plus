@@ -29,7 +29,7 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
     ) {
         var currentSelected by remember { mutableStateOf("Feedback") }
 
-        MainContainer(currentSelected)
+        MainContainer(currentSelected, navHostController, viewModel)
 
         BottomBar(currentSelected = currentSelected, onSelectionChanged = {
             currentSelected = it
@@ -42,6 +42,6 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
 }
 
 @Composable
-fun MainContainer(currentSelected: String) {
-    if (currentSelected == "Feedback") FeedbackListContainer() else ReimbursementListContainer()
+fun MainContainer(currentSelected: String, navHostController: NavHostController, viewModel: MainViewModel) {
+    if (currentSelected == "Feedback") FeedbackListContainer(navHostController, viewModel) else ReimbursementListContainer()
 }
