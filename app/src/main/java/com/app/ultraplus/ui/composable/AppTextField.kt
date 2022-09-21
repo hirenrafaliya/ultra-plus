@@ -11,6 +11,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.app.ultraplus.ui.theme.AppTheme
 
@@ -22,7 +23,8 @@ fun AppTextField(
     label: String,
     onTextChanged: (String) -> Unit,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardOptions : KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    multiLine: Boolean = false
 ) {
 
     @Composable
@@ -45,7 +47,8 @@ fun AppTextField(
             }
         },
         modifier = modifier
-            .fillMaxWidth().height(60.dp),
+            .fillMaxWidth()
+            .height(if (multiLine) Dp.Companion.Unspecified else 60.dp),
         textStyle = AppTheme.typography.semiBold15,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions

@@ -8,7 +8,7 @@ data class Feedback(
     @PropertyName("created_on") val createdOn: Date = Date(),
     @PropertyName("created_by") val createdBy: String = "",
     @PropertyName("updated_on") val updatedOn: Date = Date(),
-    @PropertyName("status") val status: String = "",
+    @PropertyName("status") val status: String = FeedbackStatus.PENDING.text,
     @PropertyName("shop_name") val shopName: String = "",
     @PropertyName("owner_name") val ownerName: String = "",
     @PropertyName("shop_address") val shopAddress: String = "",
@@ -18,4 +18,10 @@ data class Feedback(
     @PropertyName("pin_code") val pinCode: String = "",
 ) {
     constructor() : this("")
+}
+
+enum class FeedbackStatus(val text: String) {
+    PENDING("pending"),
+    REVIEWED("reviewed"),
+    CLOSED("closed")
 }
