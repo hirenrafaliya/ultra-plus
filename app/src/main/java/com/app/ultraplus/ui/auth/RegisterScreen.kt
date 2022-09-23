@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.app.ultraplus.network.model.User
+import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.composable.AppButton
 import com.app.ultraplus.ui.composable.AppTextField
 import com.app.ultraplus.ui.composable.Spacer
@@ -34,7 +35,7 @@ fun RegisterScreen(navHostController: NavHostController, viewModel: AuthViewMode
 @PreviewApi
 @Composable
 fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthViewModel) {
-    val userTypes = listOf("Area manager", "Reporting manager")
+    val userTypes = listOf(UserType.AREA_MANAGER.display, UserType.REPORTING_MANAGER.display)
 
     var userType by remember { mutableStateOf(userTypes[0]) }
     var name by remember { mutableStateOf("") }
@@ -48,8 +49,12 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
 
     val onUserTypeChanged = { type: String -> userType = type }
     val onRegisterClicked: () -> Unit = {
+        val uType = when (userType) {
+            userTypes[0] -> UserType.AREA_MANAGER.text
+            else -> UserType.REPORTING_MANAGER.text
+        }
         val user =
-            User(userType = userType, userName = name, phoneNumber = phoneNumber, email = email, bio = bio, password = password)
+            User(userType = uType, userName = name, phoneNumber = phoneNumber, email = email, bio = bio, password = password)
 
         isLoading = true
         viewModel.registerUser(user = user, onSuccess = {

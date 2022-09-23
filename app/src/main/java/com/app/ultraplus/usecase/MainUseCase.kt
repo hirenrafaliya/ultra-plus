@@ -2,8 +2,10 @@ package com.app.ultraplus.usecase
 
 import android.content.Context
 import com.app.ultraplus.base.safeExecute
+import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.Reimbursement
+import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.util.FsConstant
 import com.app.ultraplus.util.await
 import com.google.firebase.auth.FirebaseAuth
@@ -28,8 +30,16 @@ class MainUseCase @Inject constructor(
         }
 
     suspend fun getFeedbacks(onSuccess: (List<Feedback>) -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
-        val documents = fireStore.collection(FsConstant.FEEDBACK_CL).get().await()
-        val feedbacks = if(!documents.isEmpty) documents.toObjects(Feedback::class.java) else listOf<Feedback>()
+        val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
+
+        val query = when (UserPref.getUser().userType) {
+            UserType.REPORTING_MANAGER.text -> colRef.whereEqualTo("assigned_to", UserPref.getUser().userName)
+            UserType.ADMIN.text -> colRef
+            else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
+        }
+
+        val documents = query.get().await()
+        val feedbacks = if (!documents.isEmpty) documents.toObjects(Feedback::class.java) else listOf<Feedback>()
         onSuccess(feedbacks)
     }
 }

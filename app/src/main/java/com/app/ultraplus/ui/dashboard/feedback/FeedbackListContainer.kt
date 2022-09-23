@@ -1,15 +1,15 @@
 package com.app.ultraplus.ui.dashboard.feedback
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -55,16 +55,16 @@ fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel
             Column(Modifier.fillMaxWidth()) {
                 Text(text = "Hello $userName", style = AppTheme.typography.regular15, color = AppTheme.colors.TextBlackPrimary)
                 Text(text = "Good Afternoon", style = AppTheme.typography.semiBold22, color = AppTheme.colors.TextBlackPrimary)
-                Spacer(space = ItemPaddings.small)
+                Spacer(space = ItemPaddings.xSmall)
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .background(color = AppTheme.colors.LightBlueSecondary)
+                        .background(color = AppTheme.colors.MidBlueSecondary)
                 )
-                Spacer(space = ItemPaddings.medium)
+                Spacer(space = ItemPaddings.small)
                 Text(text = "Feedbacks", style = AppTheme.typography.bold22, color = AppTheme.colors.TextBlackPrimary)
-                Spacer(space = ItemPaddings.large)
+                Spacer(space = ItemPaddings.xxSmall)
             }
         }
         feedbackList(feedbacks = feedbacks)
@@ -84,42 +84,49 @@ fun FeedbackView(feedback: Feedback) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(IntrinsicSize.Max)
+            .padding(vertical = Paddings.xSmall)
+            .border(width = 1.dp, color = AppTheme.colors.BluePrimary, shape = AppTheme.shapes.medium)
             .padding(Paddings.xxSmall)
     ) {
         Spacer(
             modifier = Modifier
-                .width(4.dp)
-                .height(32.dp)
+                .width(12.dp)
+                .fillMaxHeight(1f)
+                .clip(shape = AppTheme.shapes.small)
                 .background(color = feedback.getStatusColor())
         )
 
         Column(
             Modifier
                 .fillMaxWidth()
+                .padding(vertical = Paddings.xSmall, horizontal = Paddings.small)
         ) {
             Text(modifier = Modifier.fillMaxWidth(), text = buildAnnotatedString {
-                withStyle(style = AppTheme.typography.semiBold15.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
-                    append(feedback.shopName + "")
+                withStyle(style = AppTheme.typography.bold16.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                    append(feedback.shopName + " ")
                 }
                 withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
-                    append(feedback.ownerName)
+                    append("- " + feedback.ownerName)
                 }
             })
+            Spacer(space = 4)
             Text(
                 text = feedback.description.replace("<br>", "\n"),
                 style = AppTheme.typography.regular12,
                 color = AppTheme.colors.TextBlackSecondary,
                 maxLines = 6, overflow = TextOverflow.Clip
             )
+            Spacer(space = 6)
             Text(modifier = Modifier.fillMaxWidth(), text = buildAnnotatedString {
                 withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
                     append("By ")
                 }
-                withStyle(style = AppTheme.typography.semiBold12.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(style = AppTheme.typography.bold12.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
                     append(feedback.userName + " ")
                 }
                 withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
-                    append(feedback.createdOn.inDisplayFormat())
+                    append("on " + feedback.createdOn.inDisplayFormat())
                 }
             })
 

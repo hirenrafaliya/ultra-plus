@@ -6,18 +6,18 @@ import com.google.firebase.firestore.PropertyName
 import java.util.*
 
 data class Feedback(
-    @get:PropertyName("description") val description: String = "",
-    @get:PropertyName("created_on") val createdOn: Date = Date(),
-    @get:PropertyName("created_by") val createdBy: String = "",
-    @get:PropertyName("updated_on") val updatedOn: Date = Date(),
-    @get:PropertyName("status") val status: String = FeedbackStatus.PENDING.text,
-    @get:PropertyName("shop_name") val shopName: String = "",
-    @get:PropertyName("owner_name") val ownerName: String = "",
-    @get:PropertyName("shop_address") val shopAddress: String = "",
-    @get:PropertyName("owner_number") val ownerNumber: String = "",
-    @get:PropertyName("user_name") val userName: String = "",
-    @get:PropertyName("city") val city: String = "",
-    @get:PropertyName("pin_code") val pinCode: String = "",
+    @field:[JvmField PropertyName("description")] val description: String = "",
+    @field:[JvmField PropertyName("created_on")] val createdOn: Date = Date(),
+    @field:[JvmField PropertyName("created_by")] val createdBy: String = "",
+    @field:[JvmField PropertyName("updated_on")] val updatedOn: Date = Date(),
+    @field:[JvmField PropertyName("status")] val status: String = FeedbackStatus.PENDING.text,
+    @field:[JvmField PropertyName("shop_name")] val shopName: String = "",
+    @field:[JvmField PropertyName("owner_name")] val ownerName: String = "",
+    @field:[JvmField PropertyName("shop_address")] val shopAddress: String = "",
+    @field:[JvmField PropertyName("owner_number")] val ownerNumber: String = "",
+    @field:[JvmField PropertyName("user_name")] val userName: String = "",
+    @field:[JvmField PropertyName("city")] val city: String = "",
+    @field:[JvmField PropertyName("pin_code")] val pinCode: String = "",
 ) {
     constructor() : this("")
 
