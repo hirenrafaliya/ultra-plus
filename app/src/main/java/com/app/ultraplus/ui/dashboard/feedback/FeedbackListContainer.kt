@@ -1,7 +1,7 @@
 package com.app.ultraplus.ui.dashboard.feedback
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.ui.composable.Spacer
+import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
@@ -68,20 +69,23 @@ fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel
                 Spacer(space = ItemPaddings.xxSmall)
             }
         }
-        feedbackList(feedbacks = feedbacks)
+        feedbackList(feedbacks = feedbacks, onClick = {
+            viewModel.selectedFeedback = it
+            navHostController.navigate(Screen.FeedbackDetailScreen.route)
+        })
 
 
     }
 }
 
-fun LazyListScope.feedbackList(feedbacks: List<Feedback>) {
+fun LazyListScope.feedbackList(feedbacks: List<Feedback>, onClick: (Feedback) -> Unit) {
     items(feedbacks) {
-        FeedbackView(it)
+        FeedbackView(it, onClick)
     }
 }
 
 @Composable
-fun FeedbackView(feedback: Feedback) {
+fun FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,6 +93,7 @@ fun FeedbackView(feedback: Feedback) {
             .padding(vertical = Paddings.xSmall)
             .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)
             .background(color = AppTheme.colors.LightBlueSecondary, shape = AppTheme.shapes.medium)
+            .clickable { onClick(feedback) }
             .padding(Paddings.xxSmall)
     ) {
         Spacer(
@@ -96,7 +101,7 @@ fun FeedbackView(feedback: Feedback) {
                 .width(12.dp)
                 .fillMaxHeight(1f)
                 .clip(shape = AppTheme.shapes.small)
-                .background(color = feedback.getStatusColor())
+                .background(color = Feedback.getStatusColor(feedback.status))
         )
 
         Column(

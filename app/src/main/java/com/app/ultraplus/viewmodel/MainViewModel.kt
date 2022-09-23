@@ -17,6 +17,8 @@ class MainViewModel @Inject constructor(
 
     var currentSelectedBottomBarItem = mutableStateOf("Feedback")
 
+    var selectedFeedback : Feedback = Feedback()
+
     fun addFeedback(feedback: Feedback, onSuccess: () -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {
         useCase.addFeedback(feedback, onSuccess, onFailure)
     }

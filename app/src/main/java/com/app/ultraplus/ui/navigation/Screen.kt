@@ -13,5 +13,7 @@ sealed class Screen(val route: String) {
     object AddFeedbackScreen : Screen("add_feedback_screen")
     object AddReimbursementScreen : Screen("add_reimbursement_screen")
 
+    object FeedbackDetailScreen : Screen("feedback_detail_screen")
+
 
 }

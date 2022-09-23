@@ -11,6 +11,7 @@ import com.app.ultraplus.ui.auth.SplashScreen
 import com.app.ultraplus.ui.dashboard.feedback.AddFeedbackScreen
 import com.app.ultraplus.ui.dashboard.main.MainScreen
 import com.app.ultraplus.ui.dashboard.reimbursement.AddReimbursementScreen
+import com.app.ultraplus.ui.feedback.FeedbackDetailScreen
 import com.app.ultraplus.viewmodel.AuthViewModel
 import com.app.ultraplus.viewmodel.MainViewModel
 
@@ -41,6 +42,9 @@ fun SetUpNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.AddReimbursementScreen.route) {
             AddReimbursementScreen(navHostController = navController, viewModel = mainViewModel)
+        }
+        composable(route = Screen.FeedbackDetailScreen.route) {
+            FeedbackDetailScreen(navHostController = navController, viewModel = mainViewModel)
         }
     }
 }

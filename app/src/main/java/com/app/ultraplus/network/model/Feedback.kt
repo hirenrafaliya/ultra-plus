@@ -21,17 +21,35 @@ data class Feedback(
 ) {
     constructor() : this("")
 
-    @Composable
-    fun getStatusColor() = when (status) {
-        FeedbackStatus.PENDING.text -> AppTheme.colors.StatusRed
-        FeedbackStatus.REVIEWED.text -> AppTheme.colors.StatusYellow
-        FeedbackStatus.CLOSED.text -> AppTheme.colors.StatusGreen
-        else -> AppTheme.colors.StatusRed
+    companion object {
+        @Composable
+        fun getStatusColor(status: String) = when (status) {
+            FeedbackStatus.PENDING.text -> AppTheme.colors.StatusRed
+            FeedbackStatus.REVIEWED.text -> AppTheme.colors.StatusYellow
+            FeedbackStatus.CLOSED.text -> AppTheme.colors.StatusGreen
+            else -> AppTheme.colors.StatusRed
+        }
+    }
+
+    fun getFeedbackStatus(): FeedbackStatus = when (status) {
+        FeedbackStatus.PENDING.text -> FeedbackStatus.PENDING
+        FeedbackStatus.REVIEWED.text -> FeedbackStatus.REVIEWED
+        FeedbackStatus.CLOSED.text -> FeedbackStatus.CLOSED
+        else -> FeedbackStatus.PENDING
+    }
+
+    data class Comment(
+        @field:[JvmField PropertyName("text")] val text: String,
+        @field:[JvmField PropertyName("created_on")] val createdOn: Date,
+        @field:[JvmField PropertyName("created_by")] val createdBy: String,
+        @field:[JvmField PropertyName("user_name")] val userName: String
+    ) {
+        constructor() : this("", Date(), "", "")
     }
 }
 
-enum class FeedbackStatus(val text: String) {
-    PENDING("pending"),
-    REVIEWED("reviewed"),
-    CLOSED("closed")
+enum class FeedbackStatus(val text: String, val display: String) {
+    PENDING("pending", "Pending"),
+    REVIEWED("reviewed", "Reviewed"),
+    CLOSED("closed", "Closed")
 }
