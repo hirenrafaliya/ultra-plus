@@ -3,7 +3,9 @@ package com.app.ultraplus.ui.dashboard.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
@@ -27,12 +29,10 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
             .fillMaxSize()
             .background(color = AppTheme.colors.WhitePrimary)
     ) {
-        var currentSelected by remember { mutableStateOf("Feedback") }
+        MainContainer(viewModel.currentSelectedBottomBarItem.value, navHostController, viewModel)
 
-        MainContainer(currentSelected, navHostController, viewModel)
-
-        BottomBar(currentSelected = currentSelected, onSelectionChanged = {
-            currentSelected = it
+        BottomBar(currentSelected = viewModel.currentSelectedBottomBarItem.value, onSelectionChanged = {
+            viewModel.currentSelectedBottomBarItem.value = it
         }, onAddFeedback = {
             navHostController.navigate(Screen.AddFeedbackScreen.route)
         }, onAddReimbursement = {

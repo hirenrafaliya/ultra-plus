@@ -1,5 +1,6 @@
 package com.app.ultraplus.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.ultraplus.network.model.Feedback
@@ -13,6 +14,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val useCase: MainUseCase
 ): ViewModel() {
+
+    var currentSelectedBottomBarItem = mutableStateOf("Feedback")
 
     fun addFeedback(feedback: Feedback, onSuccess: () -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {
         useCase.addFeedback(feedback, onSuccess, onFailure)
