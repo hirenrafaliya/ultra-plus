@@ -42,4 +42,18 @@ class MainUseCase @Inject constructor(
         val feedbacks = if (!documents.isEmpty) documents.toObjects(Feedback::class.java) else listOf<Feedback>()
         onSuccess(feedbacks)
     }
+
+    suspend fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
+        val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
+
+        val query = when (UserPref.getUser().userType) {
+            UserType.REPORTING_MANAGER.text -> colRef.whereEqualTo("assigned_to", UserPref.getUser().userName)
+            UserType.ADMIN.text -> colRef
+            else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
+        }
+
+        val documents = query.get().await()
+        val reimbursements = if (!documents.isEmpty) documents.toObjects(Reimbursement::class.java) else listOf<Reimbursement>()
+        onSuccess(reimbursements)
+    }
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -86,7 +87,8 @@ fun FeedbackView(feedback: Feedback) {
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
             .padding(vertical = Paddings.xSmall)
-            .border(width = 1.dp, color = AppTheme.colors.BluePrimary, shape = AppTheme.shapes.medium)
+            .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)
+            .background(color = AppTheme.colors.LightBlueSecondary, shape = AppTheme.shapes.medium)
             .padding(Paddings.xxSmall)
     ) {
         Spacer(
