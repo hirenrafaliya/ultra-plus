@@ -1,12 +1,13 @@
 package com.app.ultraplus.ui.dashboard.main
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
 import com.app.ultraplus.ui.dashboard.reimbursement.ReimbursementListContainer
@@ -43,6 +44,30 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
 
 @Composable
 fun MainContainer(currentSelected: String, navHostController: NavHostController, viewModel: MainViewModel) {
-    if (currentSelected == "Feedback") FeedbackListContainer(navHostController, viewModel)
-    else ReimbursementListContainer(navHostController, viewModel)
+    AnimatedVisibility(
+        visible = currentSelected == "Feedback",
+        enter = slideIn(animationSpec = tween(800), initialOffset = { IntOffset(-it.width, 0) }) + fadeIn(
+            animationSpec = tween(
+                800
+            )
+        ),
+        exit = slideOut(animationSpec = tween(800), targetOffset = { IntOffset(-it.width, 0) }) + fadeOut(
+            animationSpec = tween(
+                800
+            )
+        )
+    ) {
+        FeedbackListContainer(modifier = Modifier, navHostController, viewModel)
+    }
+    AnimatedVisibility(
+        visible = currentSelected != "Feedback",
+        enter = slideIn(
+            animationSpec = tween(800),
+            initialOffset = { IntOffset(it.width, 0) }) + fadeIn(animationSpec = tween(800)),
+        exit = slideOut(
+            animationSpec = tween(800),
+            targetOffset = { IntOffset(it.width, 0) }) + fadeOut(animationSpec = tween(800))
+    ) {
+        ReimbursementListContainer(modifier = Modifier, navHostController, viewModel)
+    }
 }

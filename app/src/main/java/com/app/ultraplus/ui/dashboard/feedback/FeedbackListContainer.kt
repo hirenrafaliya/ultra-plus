@@ -34,13 +34,7 @@ import com.app.ultraplus.util.inDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
 
 @Composable
-fun FeedbackListContainer(navHostController: NavHostController, viewModel: MainViewModel) {
-
-    FeedbackListContainerPreview(navHostController = navHostController, viewModel = viewModel)
-}
-
-@Composable
-fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel: MainViewModel) {
+fun FeedbackListContainer(modifier: Modifier,navHostController: NavHostController, viewModel: MainViewModel) {
 
     val userName by remember { mutableStateOf(UserPref.getUser().userName) }
 
@@ -53,7 +47,7 @@ fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel
     }
 
     LazyColumn(
-        Modifier
+        modifier
             .fillMaxSize()
             .padding(horizontal = Paddings.medium)
             .padding(top = Paddings.medium),

@@ -29,13 +29,7 @@ import com.app.ultraplus.util.inDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
 
 @Composable
-fun ReimbursementListContainer(navHostController: NavHostController, viewModel: MainViewModel) {
-
-    ReimbursementListContainerPreview(navHostController = navHostController, viewModel = viewModel)
-}
-
-@Composable
-fun ReimbursementListContainerPreview(navHostController: NavHostController, viewModel: MainViewModel) {
+fun ReimbursementListContainer(modifier: Modifier,navHostController: NavHostController, viewModel: MainViewModel) {
 
     val userName by remember { mutableStateOf(UserPref.getUser().userName) }
 
@@ -48,7 +42,7 @@ fun ReimbursementListContainerPreview(navHostController: NavHostController, view
     }
 
     LazyColumn(
-        Modifier
+        modifier
             .fillMaxSize()
             .padding(horizontal = Paddings.medium)
             .padding(top = Paddings.medium),
