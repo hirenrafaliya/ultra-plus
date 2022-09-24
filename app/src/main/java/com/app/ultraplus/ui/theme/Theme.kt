@@ -48,11 +48,11 @@ fun AppTheme(
 private object AppRippleTheme : RippleTheme {
 
     @Composable
-    override fun defaultColor(): Color = AppTheme.colors.LightBluePrimary
+    override fun defaultColor(): Color = AppTheme.colors.BluePrimary
 
     @Composable
     override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
-        Color.Black,
+        AppTheme.colors.BluePrimary,
         lightTheme = !isSystemInDarkTheme()
     )
 
