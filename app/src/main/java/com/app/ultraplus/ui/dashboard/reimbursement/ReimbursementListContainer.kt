@@ -1,8 +1,13 @@
 package com.app.ultraplus.ui.dashboard.reimbursement
 
+import android.view.animation.OvershootInterpolator
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -33,11 +38,10 @@ fun ReimbursementListContainer(navHostController: NavHostController, viewModel: 
 fun ReimbursementListContainerPreview(navHostController: NavHostController, viewModel: MainViewModel) {
 
     val userName by remember { mutableStateOf(UserPref.getUser().userName) }
-    var reimbursements by remember { mutableStateOf(listOf<Reimbursement>()) }
 
     LaunchedEffect(Unit) {
         viewModel.getReimbursements(onSuccess = {
-            reimbursements = it
+            viewModel.reimbursements = it
         }, onFailure = {
 
         })
@@ -47,7 +51,8 @@ fun ReimbursementListContainerPreview(navHostController: NavHostController, view
         Modifier
             .fillMaxSize()
             .padding(horizontal = Paddings.medium)
-            .padding(top = Paddings.medium)
+            .padding(top = Paddings.medium),
+        contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
     ) {
 
         item {
@@ -66,23 +71,27 @@ fun ReimbursementListContainerPreview(navHostController: NavHostController, view
                 Spacer(space = ItemPaddings.xxSmall)
             }
         }
-        reimbursementList(reimbursements = reimbursements)
+        reimbursementList(reimbursements = viewModel.reimbursements)
 
 
     }
 }
 
 fun LazyListScope.reimbursementList(reimbursements: List<Reimbursement>) {
-    items(reimbursements) {
+    items(reimbursements, key = { it.id }) {
         ReimbursementView(it)
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ReimbursementView(reimbursement: Reimbursement) {
+fun LazyItemScope.ReimbursementView(reimbursement: Reimbursement) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .animateItemPlacement(animationSpec = tween(800, easing = Easing {
+                OvershootInterpolator(4.0f).getInterpolation(it)
+            }))
             .height(IntrinsicSize.Max)
             .padding(vertical = Paddings.xSmall)
             .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)

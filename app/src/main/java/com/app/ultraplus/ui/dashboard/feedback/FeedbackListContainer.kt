@@ -1,9 +1,16 @@
 package com.app.ultraplus.ui.dashboard.feedback
 
+import android.view.animation.BounceInterpolator
+import android.view.animation.OvershootInterpolator
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -36,11 +43,10 @@ fun FeedbackListContainer(navHostController: NavHostController, viewModel: MainV
 fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel: MainViewModel) {
 
     val userName by remember { mutableStateOf(UserPref.getUser().userName) }
-    var feedbacks by remember { mutableStateOf(listOf<Feedback>()) }
 
     LaunchedEffect(Unit) {
         viewModel.getFeedbacks(onSuccess = {
-            feedbacks = it
+            viewModel.feedbacks = it
         }, onFailure = {
 
         })
@@ -50,7 +56,8 @@ fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel
         Modifier
             .fillMaxSize()
             .padding(horizontal = Paddings.medium)
-            .padding(top = Paddings.medium)
+            .padding(top = Paddings.medium),
+        contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
     ) {
 
         item {
@@ -69,7 +76,7 @@ fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel
                 Spacer(space = ItemPaddings.xxSmall)
             }
         }
-        feedbackList(feedbacks = feedbacks, onClick = {
+        feedbackList(feedbacks = viewModel.feedbacks, onClick = {
             viewModel.selectedFeedback = it
             navHostController.navigate(Screen.FeedbackDetailScreen.route)
         })
@@ -79,16 +86,25 @@ fun FeedbackListContainerPreview(navHostController: NavHostController, viewModel
 }
 
 fun LazyListScope.feedbackList(feedbacks: List<Feedback>, onClick: (Feedback) -> Unit) {
-    items(feedbacks) {
+    items(feedbacks, key = { it.id }) {
         FeedbackView(it, onClick)
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) {
+fun LazyItemScope.FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) {
+    val statusColor by animateColorAsState(
+        targetValue = Feedback.getStatusColor(feedback.status),
+        animationSpec = tween(1000, easing = Easing { BounceInterpolator().getInterpolation(it) })
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .animateItemPlacement(animationSpec = tween(800, easing = Easing {
+                OvershootInterpolator(4.0f).getInterpolation(it)
+            }))
             .height(IntrinsicSize.Max)
             .padding(vertical = Paddings.xSmall)
             .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)
@@ -101,7 +117,7 @@ fun FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) {
                 .width(12.dp)
                 .fillMaxHeight(1f)
                 .clip(shape = AppTheme.shapes.small)
-                .background(color = Feedback.getStatusColor(feedback.status))
+                .background(color = statusColor)
         )
 
         Column(

@@ -31,4 +31,5 @@ object ItemPaddings {
     val large = 32
     val xLarge = 46
     val xxLarge = 56
+    val xxxLarge = 84
 }

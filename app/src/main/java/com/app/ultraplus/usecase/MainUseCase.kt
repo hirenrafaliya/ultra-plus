@@ -10,6 +10,7 @@ import com.app.ultraplus.util.FsConstant
 import com.app.ultraplus.util.await
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import javax.inject.Inject
 
 class MainUseCase @Inject constructor(
@@ -38,7 +39,7 @@ class MainUseCase @Inject constructor(
             else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
         }
 
-        val documents = query.get().await()
+        val documents = query.orderBy("created_on",Query.Direction.DESCENDING).get().await()
         val feedbacks = if (!documents.isEmpty) {
             documents.toObjects(Feedback::class.java).apply {
                 forEachIndexed { index, value ->
@@ -60,7 +61,7 @@ class MainUseCase @Inject constructor(
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
             }
 
-            val documents = query.get().await()
+            val documents = query.orderBy("created_on",Query.Direction.DESCENDING).get().await()
             val reimbursements =
                 if (!documents.isEmpty) {
                     documents.toObjects(Reimbursement::class.java).apply {
@@ -75,7 +76,7 @@ class MainUseCase @Inject constructor(
     suspend fun getComments(feedback: Feedback, onSuccess: (List<Feedback.Comment>) -> Unit, onFailure: (String) -> Unit) =
         safeExecute(onFailure) {
             val documents =
-                fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).collection(FsConstant.COMMENT_CL).get().await()
+                fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).collection(FsConstant.COMMENT_CL).orderBy("created_on",Query.Direction.DESCENDING).get().await()
 
             val comments = if (!documents.isEmpty) {
                 documents.toObjects(Feedback.Comment::class.java).apply {
