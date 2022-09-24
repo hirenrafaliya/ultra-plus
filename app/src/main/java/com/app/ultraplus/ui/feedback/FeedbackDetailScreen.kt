@@ -1,10 +1,13 @@
 package com.app.ultraplus.ui.feedback
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Call
+import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -12,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
@@ -26,12 +30,14 @@ import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.FeedbackStatus
 import com.app.ultraplus.ui.composable.AppBack
+import com.app.ultraplus.ui.composable.AppTextField
 import com.app.ultraplus.ui.composable.Spacer
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.util.inDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
+import java.util.*
 
 @Composable
 fun FeedbackDetailScreen(navHostController: NavHostController, viewModel: MainViewModel) {
@@ -41,15 +47,38 @@ fun FeedbackDetailScreen(navHostController: NavHostController, viewModel: MainVi
 
 @Composable
 fun FeedbackDetailScreenPreview(navHostController: NavHostController, viewModel: MainViewModel) {
-    val feedback by remember { mutableStateOf(viewModel.selectedFeedback) }
-    val comments by remember { mutableStateOf(mutableListOf<Feedback.Comment>()) }
+    var feedback by remember { mutableStateOf(viewModel.selectedFeedback) }
+    var comments by remember { mutableStateOf(listOf<Feedback.Comment>()) }
 
-    comments.add(Feedback.Comment())
-    comments.add(Feedback.Comment())
-    comments.add(Feedback.Comment())
+    LaunchedEffect(Unit) {
+        viewModel.getComments(feedback = feedback, onSuccess = {
+            comments = it
+        }, onFailure = {
+
+        })
+    }
 
     val onStatusChanged: (FeedbackStatus) -> Unit = {
+        feedback = feedback.copy(status = it.text)
+        viewModel.updateStatus(feedback = feedback, onSuccess = {
 
+        }, onFailure = {
+
+        })
+    }
+
+    val onCommentAdded: (String) -> Unit = {
+        val comment = Feedback.Comment(
+            text = it,
+            createdOn = Date(),
+            createdBy = UserPref.getUser().userId,
+            userName = UserPref.getUser().userName
+        )
+        viewModel.addComment(feedback = feedback, comment = comment, onSuccess = {
+            comments = comments.toMutableList().apply { add(0, comment) }.toList()
+        }, onFailure = {
+
+        })
     }
 
 
@@ -71,14 +100,17 @@ fun FeedbackDetailScreenPreview(navHostController: NavHostController, viewModel:
                 .verticalScroll(rememberScrollState())
         ) {
             DescriptionAndStatusContainer(feedback = feedback, onStatusChanged = onStatusChanged)
-            CommentContainer(comments = comments)
+            CommentContainer(comments = comments, onCommentAdded = onCommentAdded)
         }
 
     }
 }
 
 @Composable
-fun CommentContainer(comments: List<Feedback.Comment>) {
+fun CommentContainer(comments: List<Feedback.Comment>, onCommentAdded: (String) -> Unit) {
+    var isShowAddComment by remember { mutableStateOf(false) }
+    val rotate by animateFloatAsState(targetValue = if (isShowAddComment) 135f else 0f)
+
     Box(modifier = Modifier.fillMaxWidth()) {
         Column(
             Modifier
@@ -100,7 +132,8 @@ fun CommentContainer(comments: List<Feedback.Comment>) {
                     .padding(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(modifier = Modifier.size(15.dp),
+                Image(
+                    modifier = Modifier.size(15.dp),
                     painter = painterResource(id = R.drawable.ic_comment),
                     contentDescription = "",
                     colorFilter = ColorFilter.tint(color = AppTheme.colors.TextBlackPrimary)
@@ -109,20 +142,71 @@ fun CommentContainer(comments: List<Feedback.Comment>) {
                 Text(text = "Comments", style = AppTheme.typography.semiBold15, color = AppTheme.colors.TextBlackPrimary)
             }
             Spacer(space = ItemPaddings.xSmall)
+            AddCommentContainer(isShowAddComment) {
+                isShowAddComment = false
+                onCommentAdded(it)
+            }
             CommentListContainer(comments)
+            Spacer(space = ItemPaddings.xxLarge)
         }
         FloatingActionButton(
             modifier = Modifier
                 .padding(end = Paddings.medium)
                 .size(42.dp)
+                .rotate(rotate)
                 .align(Alignment.TopEnd),
             containerColor = AppTheme.colors.BluePrimary,
-            onClick = { /*TODO*/ },
+            onClick = { isShowAddComment = !isShowAddComment },
             shape = AppTheme.shapes.roundShape
         ) {
             Icon(imageVector = Icons.Rounded.Add, contentDescription = "", tint = AppTheme.colors.WhitePrimary)
         }
     }
+}
+
+@Composable
+fun AddCommentContainer(isShowAddComment: Boolean, onCommentAdded: (String) -> Unit) {
+    var comment by remember { mutableStateOf("") }
+
+    AnimatedVisibility(visible = isShowAddComment) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max)
+                .padding(vertical = Paddings.xSmall)
+                .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)
+                .background(color = AppTheme.colors.LightBlueSecondary, shape = AppTheme.shapes.medium)
+                .padding(Paddings.xxSmall)
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .width(12.dp)
+                    .fillMaxHeight(1f)
+                    .clip(shape = AppTheme.shapes.small)
+                    .background(color = AppTheme.colors.BluePrimary)
+            )
+
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Paddings.xSmall, horizontal = Paddings.small)
+            ) {
+                AppTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = comment,
+                    label = "Add Comment",
+                    onTextChanged = { comment = it },
+                    multiLine = true
+                ) {
+                    Icon(modifier = Modifier.clickable {
+                        onCommentAdded(comment)
+                        comment = ""
+                    }, imageVector = Icons.Rounded.Send, contentDescription = "", tint = AppTheme.colors.BluePrimary)
+                }
+            }
+        }
+    }
+
 }
 
 @Composable

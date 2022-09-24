@@ -1,10 +1,13 @@
 package com.app.ultraplus.util
 
+import androidx.annotation.NonNull
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 import kotlin.coroutines.resumeWithException
 
 suspend fun <T> Task<T>.await(): T {

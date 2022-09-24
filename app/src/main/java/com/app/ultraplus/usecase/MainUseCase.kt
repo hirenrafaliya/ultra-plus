@@ -39,21 +39,64 @@ class MainUseCase @Inject constructor(
         }
 
         val documents = query.get().await()
-        val feedbacks = if (!documents.isEmpty) documents.toObjects(Feedback::class.java) else listOf<Feedback>()
+        val feedbacks = if (!documents.isEmpty) {
+            documents.toObjects(Feedback::class.java).apply {
+                forEachIndexed { index, value ->
+                    value.id = documents.documents[index].id
+                }
+            }
+        } else listOf<Feedback>()
         onSuccess(feedbacks)
     }
 
-    suspend fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
-        val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
 
-        val query = when (UserPref.getUser().userType) {
-            UserType.REPORTING_MANAGER.text -> colRef.whereEqualTo("assigned_to", UserPref.getUser().userName)
-            UserType.ADMIN.text -> colRef
-            else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
+    suspend fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
+
+            val query = when (UserPref.getUser().userType) {
+                UserType.REPORTING_MANAGER.text -> colRef.whereEqualTo("assigned_to", UserPref.getUser().userName)
+                UserType.ADMIN.text -> colRef
+                else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
+            }
+
+            val documents = query.get().await()
+            val reimbursements =
+                if (!documents.isEmpty) {
+                    documents.toObjects(Reimbursement::class.java).apply {
+                        forEachIndexed { index, value ->
+                            value.id = documents.documents[index].id
+                        }
+                    }
+                } else listOf<Reimbursement>()
+            onSuccess(reimbursements)
         }
 
-        val documents = query.get().await()
-        val reimbursements = if (!documents.isEmpty) documents.toObjects(Reimbursement::class.java) else listOf<Reimbursement>()
-        onSuccess(reimbursements)
+    suspend fun getComments(feedback: Feedback, onSuccess: (List<Feedback.Comment>) -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            val documents =
+                fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).collection(FsConstant.COMMENT_CL).get().await()
+
+            val comments = if (!documents.isEmpty) {
+                documents.toObjects(Feedback.Comment::class.java).apply {
+                    forEachIndexed { index, value ->
+                        value.id = documents.documents[index].id
+                    }
+                }
+            } else listOf<Feedback.Comment>()
+            onSuccess(comments)
+        }
+
+    suspend fun addComment(feedback: Feedback, comment: Feedback.Comment, onSuccess: () -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).collection(FsConstant.COMMENT_CL).add(comment)
+                .await()
+            onSuccess()
+        }
+
+    suspend fun updateStatus(feedback: Feedback, onSuccess: () -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
+        fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).update("status", feedback.status)
+            .await()
+        onSuccess()
     }
 }

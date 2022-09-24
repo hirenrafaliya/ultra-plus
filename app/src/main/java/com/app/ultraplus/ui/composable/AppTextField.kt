@@ -25,7 +25,8 @@ fun AppTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     multiLine: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    trailingIcon: @Composable() (() -> Unit)? = null
 ) {
 
     @Composable
@@ -53,6 +54,7 @@ fun AppTextField(
         textStyle = AppTheme.typography.semiBold15,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
-        enabled = enabled
+        enabled = enabled,
+        trailingIcon = trailingIcon
     )
 }

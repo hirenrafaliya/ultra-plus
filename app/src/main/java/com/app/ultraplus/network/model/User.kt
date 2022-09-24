@@ -1,9 +1,11 @@
 package com.app.ultraplus.network.model
 
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import java.util.*
 
 data class User(
+    @get:Exclude @set:Exclude var id:String = "",
     @field:[JvmField PropertyName("user_id")] val userId: String = "",
     @field:[JvmField PropertyName("phone_number")] val phoneNumber: String = "",
     @field:[JvmField PropertyName("user_name")] val userName: String = "",

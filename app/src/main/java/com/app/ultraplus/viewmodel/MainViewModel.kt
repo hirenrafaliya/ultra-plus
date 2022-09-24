@@ -35,4 +35,18 @@ class MainViewModel @Inject constructor(
     fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {
         useCase.getReimbursements(onSuccess, onFailure)
     }
+
+    fun getComments(feedback: Feedback, onSuccess: (List<Feedback.Comment>) -> Unit, onFailure: (String) -> Unit) =
+        viewModelScope.launch {
+            useCase.getComments(feedback, onSuccess, onFailure)
+        }
+
+    fun addComment(feedback: Feedback, comment: Feedback.Comment, onSuccess: () -> Unit, onFailure: (String) -> Unit) =
+        viewModelScope.launch {
+            useCase.addComment(feedback, comment, onSuccess, onFailure)
+        }
+
+    fun updateStatus(feedback: Feedback, onSuccess: () -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {
+        useCase.updateStatus(feedback, onSuccess, onFailure)
+    }
 }

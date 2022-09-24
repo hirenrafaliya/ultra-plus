@@ -134,7 +134,8 @@ fun AddFeedbackScreenPreview(navHostController: NavHostController, viewModel: Ma
             }
 
             Spacer(space = ItemPaddings.medium)
-            AppTextField(modifier = Modifier,
+            AppTextField(
+                modifier = Modifier,
                 text = feedback,
                 label = "Feedback",
                 multiLine = true,
