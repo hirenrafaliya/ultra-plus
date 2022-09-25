@@ -1,6 +1,6 @@
 package com.app.ultraplus.ui.dashboard.feedback
 
-import android.view.animation.BounceInterpolator
+import android.view.animation.CycleInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Easing
@@ -90,7 +90,7 @@ fun LazyListScope.feedbackList(feedbacks: List<Feedback>, onClick: (Feedback) ->
 fun LazyItemScope.FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) {
     val statusColor by animateColorAsState(
         targetValue = Feedback.getStatusColor(feedback.status),
-        animationSpec = tween(1000, easing = Easing { BounceInterpolator().getInterpolation(it) })
+        animationSpec = tween(1000, easing = { CycleInterpolator(10f).getInterpolation(it) })
     )
 
     Row(

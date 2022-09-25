@@ -34,7 +34,7 @@ class MainUseCase @Inject constructor(
         val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
 
         val query = when (UserPref.getUser().userType) {
-            UserType.REPORTING_MANAGER.text -> colRef.whereEqualTo("assigned_to", UserPref.getUser().userName)
+            UserType.REPORTING_MANAGER.text -> colRef.whereIn("created_by", UserPref.getUser().assignedManagers)
             UserType.ADMIN.text -> colRef
             else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
         }
@@ -56,7 +56,7 @@ class MainUseCase @Inject constructor(
             val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
 
             val query = when (UserPref.getUser().userType) {
-                UserType.REPORTING_MANAGER.text -> colRef.whereEqualTo("assigned_to", UserPref.getUser().userName)
+                UserType.REPORTING_MANAGER.text -> colRef.whereIn("created_by", UserPref.getUser().assignedManagers)
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
             }

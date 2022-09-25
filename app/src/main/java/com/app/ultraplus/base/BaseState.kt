@@ -16,5 +16,5 @@ suspend fun safeExecute(onFailure: (String) -> Unit, block: suspend () -> Unit) 
     block()
 } catch (e: Exception) {
     Log.d(Constants.TAG, "safeExecute: ${e.message}")
-    onFailure.invoke(e.messageOrDefault())
+    onFailure.invoke(e.messageOrDefault(    ))
 }

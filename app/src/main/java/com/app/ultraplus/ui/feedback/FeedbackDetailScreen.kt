@@ -1,13 +1,19 @@
 package com.app.ultraplus.ui.feedback
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Send
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -19,6 +25,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +36,7 @@ import com.app.ultraplus.R
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.FeedbackStatus
+import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.composable.AppBack
 import com.app.ultraplus.ui.composable.AppTextField
 import com.app.ultraplus.ui.composable.Spacer
@@ -168,7 +176,7 @@ fun CommentContainer(comments: List<Feedback.Comment>, onCommentAdded: (String) 
 fun AddCommentContainer(isShowAddComment: Boolean, onCommentAdded: (String) -> Unit) {
     var comment by remember { mutableStateOf("") }
 
-    AnimatedVisibility(visible = isShowAddComment) {
+    AnimatedVisibility(visible = isShowAddComment, enter = expandVertically(), exit = shrinkVertically()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -198,10 +206,16 @@ fun AddCommentContainer(isShowAddComment: Boolean, onCommentAdded: (String) -> U
                     onTextChanged = { comment = it },
                     multiLine = true
                 ) {
-                    Icon(modifier = Modifier.clickable {
-                        onCommentAdded(comment)
-                        comment = ""
-                    }, imageVector = Icons.Rounded.Send, contentDescription = "", tint = AppTheme.colors.BluePrimary)
+                    Icon(
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(bounded = false)
+                        ) {
+                            onCommentAdded(comment)
+                            comment = ""
+
+                        }, imageVector = Icons.Rounded.Send, contentDescription = "", tint = AppTheme.colors.BluePrimary
+                    )
                 }
             }
         }
@@ -351,6 +365,8 @@ fun HeaderContainer(navHostController: NavHostController, feedback: Feedback) {
 fun StatusView(modifier: Modifier, status: FeedbackStatus, onSelect: (FeedbackStatus) -> Unit) {
     val statusList = listOf(FeedbackStatus.PENDING, FeedbackStatus.REVIEWED, FeedbackStatus.CLOSED)
     var selected by remember { mutableStateOf(status) }
+    val context = LocalContext.current
+    val isGranted = remember { UserPref.getUser().userType == UserType.REPORTING_MANAGER.text }
 
     Row(
         modifier = modifier
@@ -358,10 +374,14 @@ fun StatusView(modifier: Modifier, status: FeedbackStatus, onSelect: (FeedbackSt
             .border(width = 1.dp, shape = AppTheme.shapes.medium, color = AppTheme.colors.MidBlueSecondary)
             .padding(Paddings.xxSmall)
     ) {
-        statusList.forEach {
-            StatusItem(isSelected = selected == it, status = it, onSelect = {
-                onSelect(it)
-                selected = it
+        statusList.forEach { feedback ->
+            StatusItem(isSelected = selected == feedback, status = feedback, onSelect = {
+                if (isGranted) {
+                    onSelect(it)
+                    selected = it
+                } else {
+                    Toast.makeText(context, "Only Reporting managers can update the status", Toast.LENGTH_SHORT).show()
+                }
             })
         }
     }
@@ -369,19 +389,19 @@ fun StatusView(modifier: Modifier, status: FeedbackStatus, onSelect: (FeedbackSt
 
 @Composable
 fun RowScope.StatusItem(isSelected: Boolean, status: FeedbackStatus, onSelect: (FeedbackStatus) -> Unit) {
+    val color by animateColorAsState(
+        targetValue = if (isSelected) Feedback.getStatusColor(status = status.text) else AppTheme.colors.WhitePrimary
+    )
     Text(
         modifier = Modifier
             .fillMaxWidth()
             .weight(1f)
             .background(
-                color = if (isSelected) Feedback
-                    .getStatusColor(status = status.text)
-                    .copy(alpha = 0.25f)
-                else AppTheme.colors.WhitePrimary,
+                color = color.copy(alpha = 0.25f),
                 shape = AppTheme.shapes.small
             )
-            .padding(vertical = 10.dp)
-            .clickable { onSelect(status) },
+            .clickable { onSelect(status) }
+            .padding(vertical = 10.dp),
         text = status.display,
         color = if (isSelected) Feedback.getStatusColor(status = status.text)
         else AppTheme.colors.TextBlackSecondary,

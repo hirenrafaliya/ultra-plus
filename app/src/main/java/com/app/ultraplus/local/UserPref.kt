@@ -12,7 +12,7 @@ object UserPref : KotprefModel() {
     private var fcmToken by stringPref()
     private var email by stringPref()
     private var bio by stringPref()
-    private var assignedTo by stringPref()
+    private val assignedManagers by stringSetPref()
 
     fun setUser(user: User) {
         userId = user.userId
@@ -23,7 +23,9 @@ object UserPref : KotprefModel() {
         fcmToken = user.fcmToken
         email = user.email
         bio = user.bio
-        assignedTo = user.assignedTo
+
+        assignedManagers.clear()
+        assignedManagers.addAll(user.assignedManagers.toSet())
     }
 
     fun getUser() = User(
@@ -35,7 +37,7 @@ object UserPref : KotprefModel() {
         fcmToken = fcmToken,
         email = email,
         bio = bio,
-        assignedTo = assignedTo
+        assignedManagers = assignedManagers.toList()
     )
 
     fun isLoggedIn() = userId != ""

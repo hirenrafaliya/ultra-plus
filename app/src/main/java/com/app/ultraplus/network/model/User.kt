@@ -16,7 +16,7 @@ data class User(
     @field:[JvmField PropertyName("fcm_token")] val fcmToken: String = "",
     @field:[JvmField PropertyName("email")] val email: String = "",
     @field:[JvmField PropertyName("bio")] val bio: String = "",
-    @field:[JvmField PropertyName("assigned_to")] val assignedTo: String = ""
+    @field:[JvmField PropertyName("assigned_managers")] val assignedManagers: List<String> = listOf()
 ) {
     constructor() : this("")
 }

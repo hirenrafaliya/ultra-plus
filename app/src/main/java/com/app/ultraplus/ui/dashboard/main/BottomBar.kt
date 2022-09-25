@@ -24,6 +24,7 @@ import com.app.ultraplus.ui.theme.AppTheme
 fun BoxScope.BottomBar(
     onSelectionChanged: (String) -> Unit,
     currentSelected: String,
+    isShowAddButton: Boolean,
     onAddFeedback: () -> Unit,
     onAddReimbursement: () -> Unit
 ) {
@@ -49,9 +50,13 @@ fun BoxScope.BottomBar(
                     .fillMaxWidth()
                     .shadow(elevation = 4.dp)
             ) {
-                BottomBarItem(text = "Feedback", icon = R.drawable.ic_feedback, currentSelected = currentSelected, onClick = {
-                    onSelectionChanged("Feedback")
-                })
+                BottomBarItem(
+                    text = "Feedback",
+                    icon = R.drawable.ic_feedback,
+                    currentSelected = currentSelected,
+                    onClick = {
+                        onSelectionChanged("Feedback")
+                    })
                 BottomBarItem(
                     text = "Reimbursement",
                     icon = R.drawable.ic_reimbursement,
@@ -61,35 +66,45 @@ fun BoxScope.BottomBar(
                     })
             }
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 26.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(space = 4)
-            Box(
+        if (isShowAddButton)
+            Column(
                 modifier = Modifier
-                    .size(52.dp)
-                    .clip(shape = AppTheme.shapes.roundShape)
-                    .clickable(onClick = {
-                        if (currentSelected == "Feedback") onAddFeedback() else onAddReimbursement()
-                    })
-                    .background(color = AppTheme.colors.LightBluePrimary, shape = AppTheme.shapes.roundShape)
-                    .padding(2.dp)
-                    .background(color = AppTheme.colors.MidBlueSecondary, shape = AppTheme.shapes.roundShape)
-                    .padding(2.dp)
-                    .background(color = AppTheme.colors.BluePrimary, shape = AppTheme.shapes.roundShape),
-                contentAlignment = Alignment.Center
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 26.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    modifier = Modifier,
-                    imageVector = Icons.Rounded.Add,
-                    tint = AppTheme.colors.WhitePrimary,
-                    contentDescription = ""
-                )
+                Spacer(space = 4)
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(shape = AppTheme.shapes.roundShape)
+                        .clickable(onClick = {
+                            if (currentSelected == "Feedback") onAddFeedback() else onAddReimbursement()
+                        })
+                        .background(
+                            color = AppTheme.colors.LightBluePrimary,
+                            shape = AppTheme.shapes.roundShape
+                        )
+                        .padding(2.dp)
+                        .background(
+                            color = AppTheme.colors.MidBlueSecondary,
+                            shape = AppTheme.shapes.roundShape
+                        )
+                        .padding(2.dp)
+                        .background(
+                            color = AppTheme.colors.BluePrimary,
+                            shape = AppTheme.shapes.roundShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        modifier = Modifier,
+                        imageVector = Icons.Rounded.Add,
+                        tint = AppTheme.colors.WhitePrimary,
+                        contentDescription = ""
+                    )
+                }
             }
-        }
     }
 }
 

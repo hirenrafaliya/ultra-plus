@@ -5,10 +5,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
+import com.app.ultraplus.local.UserPref
+import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
 import com.app.ultraplus.ui.dashboard.reimbursement.ReimbursementListContainer
 import com.app.ultraplus.ui.navigation.Screen
@@ -25,6 +27,7 @@ fun MainScreen(navHostController: NavHostController, viewModel: MainViewModel) {
 @PreviewApi
 @Composable
 fun DashboardScreenPreview(navHostController: NavHostController, viewModel: MainViewModel) {
+    val userType by remember { mutableStateOf(UserPref.getUser().userType) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -32,26 +35,38 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
     ) {
         MainContainer(viewModel.currentSelectedBottomBarItem.value, navHostController, viewModel)
 
-        BottomBar(currentSelected = viewModel.currentSelectedBottomBarItem.value, onSelectionChanged = {
-            viewModel.currentSelectedBottomBarItem.value = it
-        }, onAddFeedback = {
-            navHostController.navigate(Screen.AddFeedbackScreen.route)
-        }, onAddReimbursement = {
-            navHostController.navigate(Screen.AddReimbursementScreen.route)
-        })
+        BottomBar(currentSelected = viewModel.currentSelectedBottomBarItem.value,
+            onSelectionChanged = {
+                viewModel.currentSelectedBottomBarItem.value = it
+            },
+            isShowAddButton = userType == UserType.AREA_MANAGER.text,
+            onAddFeedback = {
+                navHostController.navigate(Screen.AddFeedbackScreen.route)
+            },
+            onAddReimbursement = {
+                navHostController.navigate(Screen.AddReimbursementScreen.route)
+            })
     }
 }
 
 @Composable
-fun MainContainer(currentSelected: String, navHostController: NavHostController, viewModel: MainViewModel) {
+fun MainContainer(
+    currentSelected: String,
+    navHostController: NavHostController,
+    viewModel: MainViewModel
+) {
     AnimatedVisibility(
         visible = currentSelected == "Feedback",
-        enter = slideIn(animationSpec = tween(800), initialOffset = { IntOffset(-it.width, 0) }) + fadeIn(
+        enter = slideIn(
+            animationSpec = tween(800),
+            initialOffset = { IntOffset(-it.width, 0) }) + fadeIn(
             animationSpec = tween(
                 800
             )
         ),
-        exit = slideOut(animationSpec = tween(800), targetOffset = { IntOffset(-it.width, 0) }) + fadeOut(
+        exit = slideOut(
+            animationSpec = tween(800),
+            targetOffset = { IntOffset(-it.width, 0) }) + fadeOut(
             animationSpec = tween(
                 800
             )
