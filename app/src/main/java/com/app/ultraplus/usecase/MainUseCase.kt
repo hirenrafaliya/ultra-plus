@@ -19,49 +19,67 @@ class MainUseCase @Inject constructor(
     private val auth: FirebaseAuth
 ) {
 
-    suspend fun addFeedback(feedback: Feedback, onSuccess: () -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
+    suspend fun addFeedback(
+        feedback: Feedback,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) = safeExecute(onFailure) {
         fireStore.collection(FsConstant.FEEDBACK_CL).add(feedback).await()
         onSuccess()
     }
 
-    suspend fun addReimbursement(reimbursement: Reimbursement, onSuccess: () -> Unit, onFailure: (String) -> Unit) =
+    suspend fun addReimbursement(
+        reimbursement: Reimbursement,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) =
         safeExecute(onFailure) {
             fireStore.collection(FsConstant.REIMBURSEMENT_CL).add(reimbursement).await()
             onSuccess()
         }
 
-    suspend fun getFeedbacks(onSuccess: (List<Feedback>) -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
-        val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
-
-        val query = when (UserPref.getUser().userType) {
-            UserType.REPORTING_MANAGER.text -> colRef.whereIn("created_by", UserPref.getUser().assignedManagers)
-            UserType.ADMIN.text -> colRef
-            else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
-        }
-
-        val documents = query.orderBy("created_on",Query.Direction.DESCENDING).get().await()
-        val feedbacks = if (!documents.isEmpty) {
-            documents.toObjects(Feedback::class.java).apply {
-                forEachIndexed { index, value ->
-                    value.id = documents.documents[index].id
-                }
-            }
-        } else listOf<Feedback>()
-        onSuccess(feedbacks)
-    }
-
-
-    suspend fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) =
+    suspend fun getFeedbacks(onSuccess: (List<Feedback>) -> Unit, onFailure: (String) -> Unit) =
         safeExecute(onFailure) {
-            val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
+            val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
 
             val query = when (UserPref.getUser().userType) {
-                UserType.REPORTING_MANAGER.text -> colRef.whereIn("created_by", UserPref.getUser().assignedManagers)
+                UserType.REPORTING_MANAGER.text -> colRef.whereIn(
+                    "created_by",
+                    UserPref.getUser().assignedManagers
+                )
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
             }
 
-            val documents = query.orderBy("created_on",Query.Direction.DESCENDING).get().await()
+            val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
+            val feedbacks = if (!documents.isEmpty) {
+                documents.toObjects(Feedback::class.java).apply {
+                    forEachIndexed { index, value ->
+                        value.id = documents.documents[index].id
+                    }
+                }
+            } else listOf<Feedback>()
+            onSuccess(feedbacks)
+        }
+
+
+    suspend fun getReimbursements(
+        onSuccess: (List<Reimbursement>) -> Unit,
+        onFailure: (String) -> Unit
+    ) =
+        safeExecute(onFailure) {
+            val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
+
+            val query = when (UserPref.getUser().userType) {
+                UserType.REPORTING_MANAGER.text -> colRef.whereIn(
+                    "created_by",
+                    UserPref.getUser().assignedManagers
+                )
+                UserType.ADMIN.text -> colRef
+                else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
+            }
+
+            val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
             val reimbursements =
                 if (!documents.isEmpty) {
                     documents.toObjects(Reimbursement::class.java).apply {
@@ -73,10 +91,16 @@ class MainUseCase @Inject constructor(
             onSuccess(reimbursements)
         }
 
-    suspend fun getComments(feedback: Feedback, onSuccess: (List<Feedback.Comment>) -> Unit, onFailure: (String) -> Unit) =
+    suspend fun getComments(
+        feedback: Feedback,
+        onSuccess: (List<Feedback.Comment>) -> Unit,
+        onFailure: (String) -> Unit
+    ) =
         safeExecute(onFailure) {
             val documents =
-                fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).collection(FsConstant.COMMENT_CL).orderBy("created_on",Query.Direction.DESCENDING).get().await()
+                fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id)
+                    .collection(FsConstant.COMMENT_CL)
+                    .orderBy("created_on", Query.Direction.DESCENDING).get().await()
 
             val comments = if (!documents.isEmpty) {
                 documents.toObjects(Feedback.Comment::class.java).apply {
@@ -88,16 +112,35 @@ class MainUseCase @Inject constructor(
             onSuccess(comments)
         }
 
-    suspend fun addComment(feedback: Feedback, comment: Feedback.Comment, onSuccess: () -> Unit, onFailure: (String) -> Unit) =
+    suspend fun addComment(
+        feedback: Feedback,
+        comment: Feedback.Comment,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) =
         safeExecute(onFailure) {
-            fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).collection(FsConstant.COMMENT_CL).add(comment)
+            fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id)
+                .collection(FsConstant.COMMENT_CL).add(comment)
                 .await()
             onSuccess()
         }
 
-    suspend fun updateStatus(feedback: Feedback, onSuccess: () -> Unit, onFailure: (String) -> Unit) = safeExecute(onFailure) {
-        fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id).update("status", feedback.status)
+    suspend fun updateStatus(
+        feedback: Feedback,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) = safeExecute(onFailure) {
+        fireStore.collection(FsConstant.FEEDBACK_CL).document(feedback.id)
+            .update("status", feedback.status)
             .await()
         onSuccess()
     }
+
+    suspend fun logOut(onSuccess: () -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            UserPref.clear()
+            auth.signOut()
+
+            onSuccess()
+        }
 }

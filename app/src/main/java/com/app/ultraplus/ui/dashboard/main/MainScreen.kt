@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
+import com.app.ultraplus.ui.dashboard.profile.ProfileScreen
 import com.app.ultraplus.ui.dashboard.reimbursement.ReimbursementListContainer
 import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
@@ -38,13 +39,6 @@ fun DashboardScreenPreview(navHostController: NavHostController, viewModel: Main
         BottomBar(currentSelected = viewModel.currentSelectedBottomBarItem.value,
             onSelectionChanged = {
                 viewModel.currentSelectedBottomBarItem.value = it
-            },
-            isShowAddButton = userType == UserType.AREA_MANAGER.text,
-            onAddFeedback = {
-                navHostController.navigate(Screen.AddFeedbackScreen.route)
-            },
-            onAddReimbursement = {
-                navHostController.navigate(Screen.AddReimbursementScreen.route)
             })
     }
 }
@@ -75,7 +69,7 @@ fun MainContainer(
         FeedbackListContainer(modifier = Modifier, navHostController, viewModel)
     }
     AnimatedVisibility(
-        visible = currentSelected != "Feedback",
+        visible = currentSelected == "Reimbursement",
         enter = slideIn(
             animationSpec = tween(800),
             initialOffset = { IntOffset(it.width, 0) }) + fadeIn(animationSpec = tween(800)),
@@ -84,5 +78,16 @@ fun MainContainer(
             targetOffset = { IntOffset(it.width, 0) }) + fadeOut(animationSpec = tween(800))
     ) {
         ReimbursementListContainer(modifier = Modifier, navHostController, viewModel)
+    }
+    AnimatedVisibility(
+        visible = currentSelected == "Profile",
+        enter = slideIn(
+            animationSpec = tween(800),
+            initialOffset = { IntOffset(it.width, 0) }) + fadeIn(animationSpec = tween(800)),
+        exit = slideOut(
+            animationSpec = tween(800),
+            targetOffset = { IntOffset(it.width, 0) }) + fadeOut(animationSpec = tween(800))
+    ) {
+        ProfileScreen(modifier = Modifier, navHostController, viewModel)
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -25,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
+import com.app.ultraplus.network.model.UserType
+import com.app.ultraplus.ui.composable.AppFab
 import com.app.ultraplus.ui.composable.Spacer
 import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
@@ -34,9 +37,13 @@ import com.app.ultraplus.util.inDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
 
 @Composable
-fun FeedbackListContainer(modifier: Modifier,navHostController: NavHostController, viewModel: MainViewModel) {
+fun FeedbackListContainer(
+    modifier: Modifier,
+    navHostController: NavHostController,
+    viewModel: MainViewModel
+) {
 
-    val userName by remember { mutableStateOf(UserPref.getUser().userName) }
+    val user by remember { mutableStateOf(UserPref.getUser()) }
 
     LaunchedEffect(Unit) {
         viewModel.getFeedbacks(onSuccess = {
@@ -46,36 +53,59 @@ fun FeedbackListContainer(modifier: Modifier,navHostController: NavHostControlle
         })
     }
 
-    LazyColumn(
-        modifier
-            .fillMaxSize()
-            .padding(horizontal = Paddings.medium)
-            .padding(top = Paddings.medium),
-        contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = Paddings.medium)
+                .padding(top = Paddings.medium),
+            contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
+        ) {
 
-        item {
-            Column(Modifier.fillMaxWidth()) {
-                Text(text = "Hello $userName", style = AppTheme.typography.regular15, color = AppTheme.colors.TextBlackPrimary)
-                Text(text = "Good Afternoon", style = AppTheme.typography.semiBold22, color = AppTheme.colors.TextBlackPrimary)
-                Spacer(space = ItemPaddings.xSmall)
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color = AppTheme.colors.MidBlueSecondary)
-                )
-                Spacer(space = ItemPaddings.small)
-                Text(text = "Feedbacks", style = AppTheme.typography.bold22, color = AppTheme.colors.TextBlackPrimary)
-                Spacer(space = ItemPaddings.xxSmall)
+            item {
+                Column(Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Hello ${user.userName}",
+                        style = AppTheme.typography.regular15,
+                        color = AppTheme.colors.TextBlackPrimary
+                    )
+                    Text(
+                        text = "Good Afternoon",
+                        style = AppTheme.typography.semiBold22,
+                        color = AppTheme.colors.TextBlackPrimary
+                    )
+                    Spacer(space = ItemPaddings.xSmall)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(color = AppTheme.colors.MidBlueSecondary)
+                    )
+                    Spacer(space = ItemPaddings.small)
+                    Text(
+                        text = "Feedbacks",
+                        style = AppTheme.typography.bold22,
+                        color = AppTheme.colors.TextBlackPrimary
+                    )
+                    Spacer(space = ItemPaddings.xxSmall)
+                }
             }
+            feedbackList(feedbacks = viewModel.feedbacks, onClick = {
+                viewModel.selectedFeedback = it
+                navHostController.navigate(Screen.FeedbackDetailScreen.route)
+            })
+
+
         }
-        feedbackList(feedbacks = viewModel.feedbacks, onClick = {
-            viewModel.selectedFeedback = it
-            navHostController.navigate(Screen.FeedbackDetailScreen.route)
-        })
 
-
+        if (user.userType == UserType.AREA_MANAGER.text)
+            AppFab(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 66.dp, end = Paddings.large)
+            ) {
+                navHostController.navigate(Screen.AddFeedbackScreen.route)
+            }
     }
 }
 
@@ -120,10 +150,16 @@ fun LazyItemScope.FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) 
                 .padding(vertical = Paddings.xSmall, horizontal = Paddings.small)
         ) {
             Text(modifier = Modifier.fillMaxWidth(), text = buildAnnotatedString {
-                withStyle(style = AppTheme.typography.bold16.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.bold16.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(feedback.shopName + " ")
                 }
-                withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
+                withStyle(
+                    style = AppTheme.typography.regular12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackSecondary)
+                ) {
                     append("- " + feedback.ownerName)
                 }
             })
@@ -136,13 +172,22 @@ fun LazyItemScope.FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) 
             )
             Spacer(space = 6)
             Text(modifier = Modifier.fillMaxWidth(), text = buildAnnotatedString {
-                withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
+                withStyle(
+                    style = AppTheme.typography.regular12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackSecondary)
+                ) {
                     append("By ")
                 }
-                withStyle(style = AppTheme.typography.bold12.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.bold12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(feedback.userName + " ")
                 }
-                withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
+                withStyle(
+                    style = AppTheme.typography.regular12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackSecondary)
+                ) {
                     append("on " + feedback.createdOn.inDisplayFormat())
                 }
             })

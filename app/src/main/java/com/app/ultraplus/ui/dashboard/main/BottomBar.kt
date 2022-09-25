@@ -23,10 +23,7 @@ import com.app.ultraplus.ui.theme.AppTheme
 @Composable
 fun BoxScope.BottomBar(
     onSelectionChanged: (String) -> Unit,
-    currentSelected: String,
-    isShowAddButton: Boolean,
-    onAddFeedback: () -> Unit,
-    onAddReimbursement: () -> Unit
+    currentSelected: String
 ) {
 
     Box(
@@ -64,47 +61,15 @@ fun BoxScope.BottomBar(
                     onClick = {
                         onSelectionChanged("Reimbursement")
                     })
+                BottomBarItem(
+                    text = "Profile",
+                    icon = R.drawable.ic_profile,
+                    currentSelected = currentSelected,
+                    onClick = {
+                        onSelectionChanged("Profile")
+                    })
             }
         }
-        if (isShowAddButton)
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 26.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(space = 4)
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(shape = AppTheme.shapes.roundShape)
-                        .clickable(onClick = {
-                            if (currentSelected == "Feedback") onAddFeedback() else onAddReimbursement()
-                        })
-                        .background(
-                            color = AppTheme.colors.LightBluePrimary,
-                            shape = AppTheme.shapes.roundShape
-                        )
-                        .padding(2.dp)
-                        .background(
-                            color = AppTheme.colors.MidBlueSecondary,
-                            shape = AppTheme.shapes.roundShape
-                        )
-                        .padding(2.dp)
-                        .background(
-                            color = AppTheme.colors.BluePrimary,
-                            shape = AppTheme.shapes.roundShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        modifier = Modifier,
-                        imageVector = Icons.Rounded.Add,
-                        tint = AppTheme.colors.WhitePrimary,
-                        contentDescription = ""
-                    )
-                }
-            }
     }
 }
 

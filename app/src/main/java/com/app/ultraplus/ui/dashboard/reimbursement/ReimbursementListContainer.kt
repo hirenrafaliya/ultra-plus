@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -21,7 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Reimbursement
+import com.app.ultraplus.network.model.UserType
+import com.app.ultraplus.ui.composable.AppFab
 import com.app.ultraplus.ui.composable.Spacer
+import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
@@ -29,9 +33,13 @@ import com.app.ultraplus.util.inDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
 
 @Composable
-fun ReimbursementListContainer(modifier: Modifier,navHostController: NavHostController, viewModel: MainViewModel) {
+fun ReimbursementListContainer(
+    modifier: Modifier,
+    navHostController: NavHostController,
+    viewModel: MainViewModel
+) {
 
-    val userName by remember { mutableStateOf(UserPref.getUser().userName) }
+    val user by remember { mutableStateOf(UserPref.getUser()) }
 
     LaunchedEffect(Unit) {
         viewModel.getReimbursements(onSuccess = {
@@ -41,33 +49,60 @@ fun ReimbursementListContainer(modifier: Modifier,navHostController: NavHostCont
         })
     }
 
-    LazyColumn(
-        modifier
+    Box(
+        modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Paddings.medium)
-            .padding(top = Paddings.medium),
-        contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
+            .background(color = AppTheme.colors.WhitePrimary)
     ) {
+        LazyColumn(
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = Paddings.medium)
+                .padding(top = Paddings.medium),
+            contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
+        ) {
 
-        item {
-            Column(Modifier.fillMaxWidth()) {
-                Text(text = "Hello $userName", style = AppTheme.typography.regular15, color = AppTheme.colors.TextBlackPrimary)
-                Text(text = "Good Afternoon", style = AppTheme.typography.semiBold22, color = AppTheme.colors.TextBlackPrimary)
-                Spacer(space = ItemPaddings.xSmall)
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color = AppTheme.colors.MidBlueSecondary)
-                )
-                Spacer(space = ItemPaddings.small)
-                Text(text = "Reimbursements", style = AppTheme.typography.bold22, color = AppTheme.colors.TextBlackPrimary)
-                Spacer(space = ItemPaddings.xxSmall)
+            item {
+                Column(Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Hello ${user.userName}",
+                        style = AppTheme.typography.regular15,
+                        color = AppTheme.colors.TextBlackPrimary
+                    )
+                    Text(
+                        text = "Good Afternoon",
+                        style = AppTheme.typography.semiBold22,
+                        color = AppTheme.colors.TextBlackPrimary
+                    )
+                    Spacer(space = ItemPaddings.xSmall)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(color = AppTheme.colors.MidBlueSecondary)
+                    )
+                    Spacer(space = ItemPaddings.small)
+                    Text(
+                        text = "Reimbursements",
+                        style = AppTheme.typography.bold22,
+                        color = AppTheme.colors.TextBlackPrimary
+                    )
+                    Spacer(space = ItemPaddings.xxSmall)
+                }
             }
+            reimbursementList(reimbursements = viewModel.reimbursements)
+
+
         }
-        reimbursementList(reimbursements = viewModel.reimbursements)
 
-
+        if (user.userType == UserType.AREA_MANAGER.text)
+            AppFab(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 66.dp, end = Paddings.large)
+            ) {
+                navHostController.navigate(Screen.AddReimbursementScreen.route)
+            }
     }
 }
 
@@ -106,16 +141,28 @@ fun LazyItemScope.ReimbursementView(reimbursement: Reimbursement) {
                 .padding(vertical = Paddings.xSmall, horizontal = Paddings.small)
         ) {
             Text(text = buildAnnotatedString {
-                withStyle(style = AppTheme.typography.bold24.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.bold24.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(reimbursement.distance.toString())
                 }
-                withStyle(style = AppTheme.typography.semiBold15.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.semiBold15.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(" " + reimbursement.unit)
                 }
-                withStyle(style = AppTheme.typography.regular15.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.regular15.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(" by ")
                 }
-                withStyle(style = AppTheme.typography.semiBold15.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.semiBold15.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(reimbursement.userName)
                 }
             })

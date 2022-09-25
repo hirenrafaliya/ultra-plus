@@ -21,7 +21,7 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     text: String,
     label: String,
-    onTextChanged: (String) -> Unit,
+    onTextChanged: (String) -> Unit = { },
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     multiLine: Boolean = false,
