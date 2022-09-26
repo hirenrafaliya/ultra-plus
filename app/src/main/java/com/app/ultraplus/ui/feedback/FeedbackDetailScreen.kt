@@ -1,5 +1,7 @@
 package com.app.ultraplus.ui.feedback
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -147,7 +149,11 @@ fun CommentContainer(comments: List<Feedback.Comment>, onCommentAdded: (String) 
                     colorFilter = ColorFilter.tint(color = AppTheme.colors.TextBlackPrimary)
                 )
                 Spacer(space = ItemPaddings.xSmall)
-                Text(text = "Comments", style = AppTheme.typography.semiBold15, color = AppTheme.colors.TextBlackPrimary)
+                Text(
+                    text = "Comments",
+                    style = AppTheme.typography.semiBold15,
+                    color = AppTheme.colors.TextBlackPrimary
+                )
             }
             Spacer(space = ItemPaddings.xSmall)
             AddCommentContainer(isShowAddComment) {
@@ -167,7 +173,11 @@ fun CommentContainer(comments: List<Feedback.Comment>, onCommentAdded: (String) 
             onClick = { isShowAddComment = !isShowAddComment },
             shape = AppTheme.shapes.roundShape
         ) {
-            Icon(imageVector = Icons.Rounded.Add, contentDescription = "", tint = AppTheme.colors.WhitePrimary)
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "",
+                tint = AppTheme.colors.WhitePrimary
+            )
         }
     }
 }
@@ -176,14 +186,21 @@ fun CommentContainer(comments: List<Feedback.Comment>, onCommentAdded: (String) 
 fun AddCommentContainer(isShowAddComment: Boolean, onCommentAdded: (String) -> Unit) {
     var comment by remember { mutableStateOf("") }
 
-    AnimatedVisibility(visible = isShowAddComment, enter = expandVertically(), exit = shrinkVertically()) {
+    AnimatedVisibility(
+        visible = isShowAddComment,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Max)
                 .padding(vertical = Paddings.xSmall)
                 .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)
-                .background(color = AppTheme.colors.LightBlueSecondary, shape = AppTheme.shapes.medium)
+                .background(
+                    color = AppTheme.colors.LightBlueSecondary,
+                    shape = AppTheme.shapes.medium
+                )
                 .padding(Paddings.xxSmall)
         ) {
             Spacer(
@@ -214,7 +231,10 @@ fun AddCommentContainer(isShowAddComment: Boolean, onCommentAdded: (String) -> U
                             onCommentAdded(comment)
                             comment = ""
 
-                        }, imageVector = Icons.Rounded.Send, contentDescription = "", tint = AppTheme.colors.BluePrimary
+                        },
+                        imageVector = Icons.Rounded.Send,
+                        contentDescription = "",
+                        tint = AppTheme.colors.BluePrimary
                     )
                 }
             }
@@ -263,13 +283,22 @@ fun CommentView(comment: Feedback.Comment, isHighLighted: Boolean = false) {
             )
             Spacer(space = 6)
             Text(modifier = Modifier.fillMaxWidth(), text = buildAnnotatedString {
-                withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
+                withStyle(
+                    style = AppTheme.typography.regular12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackSecondary)
+                ) {
                     append("By ")
                 }
-                withStyle(style = AppTheme.typography.bold12.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)) {
+                withStyle(
+                    style = AppTheme.typography.bold12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackPrimary)
+                ) {
                     append(comment.userName)
                 }
-                withStyle(style = AppTheme.typography.regular12.toSpanStyle().copy(color = AppTheme.colors.TextBlackSecondary)) {
+                withStyle(
+                    style = AppTheme.typography.regular12.toSpanStyle()
+                        .copy(color = AppTheme.colors.TextBlackSecondary)
+                ) {
                     append(" on ${comment.createdOn.inDisplayFormat()}")
                 }
             }, textAlign = TextAlign.End)
@@ -295,13 +324,23 @@ fun DescriptionAndStatusContainer(feedback: Feedback, onStatusChanged: (Feedback
         )
 
         Spacer(space = ItemPaddings.medium)
-        StatusView(modifier = Modifier.fillMaxWidth(), status = feedback.getFeedbackStatus(), onSelect = onStatusChanged)
+        StatusView(
+            modifier = Modifier.fillMaxWidth(),
+            status = feedback.getFeedbackStatus(),
+            onSelect = onStatusChanged
+        )
 
     }
 }
 
 @Composable
 fun HeaderContainer(navHostController: NavHostController, feedback: Feedback) {
+
+    val context = LocalContext.current
+    val onClickDialNumber: () -> Unit = {
+        context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${feedback.ownerNumber}")))
+    }
+
     Column(
         Modifier
             .fillMaxWidth()
@@ -317,18 +356,24 @@ fun HeaderContainer(navHostController: NavHostController, feedback: Feedback) {
     ) {
         AppBack { navHostController.popBackStack() }
         Spacer(space = ItemPaddings.large)
-        Text(text = feedback.shopName, style = AppTheme.typography.bold24, color = AppTheme.colors.TextBlackPrimary)
+        Text(
+            text = feedback.shopName,
+            style = AppTheme.typography.bold24,
+            color = AppTheme.colors.TextBlackPrimary
+        )
         Spacer(space = 2)
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = buildAnnotatedString {
                     withStyle(
-                        style = AppTheme.typography.regular15.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)
+                        style = AppTheme.typography.regular15.toSpanStyle()
+                            .copy(color = AppTheme.colors.TextBlackPrimary)
                     ) {
                         append("by ")
                     }
                     withStyle(
-                        style = AppTheme.typography.semiBold15.toSpanStyle().copy(color = AppTheme.colors.TextBlackPrimary)
+                        style = AppTheme.typography.semiBold15.toSpanStyle()
+                            .copy(color = AppTheme.colors.TextBlackPrimary)
                     ) {
                         append(feedback.ownerName)
                     }
@@ -337,7 +382,11 @@ fun HeaderContainer(navHostController: NavHostController, feedback: Feedback) {
             Spacer(space = 12)
             Row(
                 modifier = Modifier
-                    .background(color = AppTheme.colors.LightBluePrimary, shape = AppTheme.shapes.medium)
+                    .background(
+                        color = AppTheme.colors.LightBluePrimary,
+                        shape = AppTheme.shapes.medium
+                    )
+                    .clickable { onClickDialNumber() }
                     .padding(horizontal = Paddings.small, vertical = Paddings.xSmall),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -348,7 +397,11 @@ fun HeaderContainer(navHostController: NavHostController, feedback: Feedback) {
                     tint = AppTheme.colors.BluePrimary
                 )
                 Spacer(space = ItemPaddings.small)
-                Text(text = "Dial Number", color = AppTheme.colors.BluePrimary, style = AppTheme.typography.semiBold12)
+                Text(
+                    text = "Dial Number",
+                    color = AppTheme.colors.BluePrimary,
+                    style = AppTheme.typography.semiBold12
+                )
             }
         }
         Spacer(space = ItemPaddings.large)
@@ -371,7 +424,11 @@ fun StatusView(modifier: Modifier, status: FeedbackStatus, onSelect: (FeedbackSt
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .border(width = 1.dp, shape = AppTheme.shapes.medium, color = AppTheme.colors.MidBlueSecondary)
+            .border(
+                width = 1.dp,
+                shape = AppTheme.shapes.medium,
+                color = AppTheme.colors.MidBlueSecondary
+            )
             .padding(Paddings.xxSmall)
     ) {
         statusList.forEach { feedback ->
@@ -380,7 +437,11 @@ fun StatusView(modifier: Modifier, status: FeedbackStatus, onSelect: (FeedbackSt
                     onSelect(it)
                     selected = it
                 } else {
-                    Toast.makeText(context, "Only Reporting managers can update the status", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Only Reporting managers can update the status",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
         }
@@ -388,7 +449,11 @@ fun StatusView(modifier: Modifier, status: FeedbackStatus, onSelect: (FeedbackSt
 }
 
 @Composable
-fun RowScope.StatusItem(isSelected: Boolean, status: FeedbackStatus, onSelect: (FeedbackStatus) -> Unit) {
+fun RowScope.StatusItem(
+    isSelected: Boolean,
+    status: FeedbackStatus,
+    onSelect: (FeedbackStatus) -> Unit
+) {
     val color by animateColorAsState(
         targetValue = if (isSelected) Feedback.getStatusColor(status = status.text) else AppTheme.colors.WhitePrimary
     )
