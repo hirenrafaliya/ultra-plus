@@ -31,6 +31,7 @@ import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.util.inDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
+import io.iamjosephmj.flinger.bahaviours.StockFlingBehaviours
 
 @Composable
 fun ReimbursementListContainer(
@@ -59,7 +60,8 @@ fun ReimbursementListContainer(
                 .fillMaxSize()
                 .padding(horizontal = Paddings.medium)
                 .padding(top = Paddings.medium),
-            contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp)
+            contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp),
+            flingBehavior = StockFlingBehaviours.smoothScroll()
         ) {
 
             item {

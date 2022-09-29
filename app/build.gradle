@@ -26,7 +26,8 @@ android {
 
     buildTypes {
         debug {
-
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled false
@@ -85,5 +86,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.2.0-alpha03"
 
     implementation 'com.chibatching.kotpref:kotpref:2.13.1'
+
+    implementation 'com.github.iamjosephmj:Flinger:1.1.1'
 
 }
