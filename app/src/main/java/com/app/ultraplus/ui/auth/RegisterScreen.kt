@@ -54,7 +54,14 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
             else -> UserType.REPORTING_MANAGER.text
         }
         val user =
-            User(userType = uType, userName = name, phoneNumber = phoneNumber, email = email, bio = bio, password = password)
+            User(
+                userType = uType,
+                userName = name,
+                phoneNumber = phoneNumber,
+                email = email,
+                bio = bio,
+                password = password
+            )
 
         isLoading = true
         viewModel.registerUser(user = user, onSuccess = {
@@ -75,7 +82,8 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
         Column(
             Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())) {
+                .verticalScroll(rememberScrollState())
+        ) {
             Text(text = "Register as...", style = AppTheme.typography.bold36)
             Spacer(space = ItemPaddings.large)
             SelectorSwitch(items = userTypes, selected = userType, onSelect = onUserTypeChanged)
@@ -95,14 +103,20 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 text = phoneNumber,
                 label = "Phone number",
                 onTextChanged = { phoneNumber = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
                 text = email,
                 label = "Email",
                 onTextChanged = { email = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
@@ -110,7 +124,8 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 label = "Bio",
                 onTextChanged = { bio = it },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text, capitalization = KeyboardCapitalization.Sentences,
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Next
                 )
             )
@@ -119,23 +134,38 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 text = password,
                 label = "Password",
                 onTextChanged = { password = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
                 text = confirmPassword,
                 label = "Confirm password",
                 onTextChanged = { confirmPassword = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                )
             )
             Spacer(space = ItemPaddings.large)
-            AppButton(text = "Register as $userType +", isLoading = isLoading, onClick = onRegisterClicked)
+            AppButton(
+                text = "Register as $userType +",
+                isLoading = isLoading,
+                onClick = onRegisterClicked
+            )
         }
     }
 }
 
 @Composable
-fun SelectorSwitch(modifier: Modifier = Modifier, items: List<String>, selected: String, onSelect: (String) -> Unit) {
+fun SelectorSwitch(
+    modifier: Modifier = Modifier,
+    items: List<String>,
+    selected: String,
+    onSelect: (String) -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -150,14 +180,18 @@ fun SelectorSwitch(modifier: Modifier = Modifier, items: List<String>, selected:
                         .weight(1f)
                         .padding(Paddings.xSmall)
                         .background(
-                            color = if (isSelected) AppTheme.colors.WhitePrimary else AppTheme.colors.LightBluePrimary,
+                            color = if (isSelected) AppTheme.colors.BluePrimary else AppTheme.colors.LightBluePrimary,
                             shape = AppTheme.shapes.medium
                         )
                         .clickable(onClick = { onSelect(it) })
                         .padding(Paddings.small),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = it, style = AppTheme.typography.regular15, color = AppTheme.colors.TextBlackPrimary)
+                    Text(
+                        text = it,
+                        style = AppTheme.typography.regular15,
+                        color = if (isSelected) AppTheme.colors.WhitePrimary else AppTheme.colors.TextBlackPrimary
+                    )
                 }
             }
         }

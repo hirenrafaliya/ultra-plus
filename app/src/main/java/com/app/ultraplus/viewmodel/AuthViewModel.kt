@@ -17,8 +17,8 @@ class AuthViewModel @Inject constructor(
         useCase.registerUser(user, onSuccess, onFailure)
     }
 
-    fun loginUser(email: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {
-        useCase.loginUser(email, password, onSuccess, onFailure)
+    fun loginUser(number: String, password: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {
+        useCase.loginUser(number, password, onSuccess, onFailure)
     }
 
     fun fetchUser(userId: String, onSuccess: (User) -> Unit, onFailure: (String) -> Unit) = viewModelScope.launch {

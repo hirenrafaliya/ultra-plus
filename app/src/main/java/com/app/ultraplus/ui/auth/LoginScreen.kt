@@ -30,7 +30,7 @@ fun LoginScreen(navHostController: NavHostController, viewModel: AuthViewModel) 
 @PreviewApi
 @Composable
 fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthViewModel) {
-    var email by remember { mutableStateOf("") }
+    var number by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
@@ -40,7 +40,7 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
 
     val onLoginClicked: () -> Unit = {
         isLoading = true
-        viewModel.loginUser(email = email, password = password, onSuccess = {
+        viewModel.loginUser(number = number, password = password, onSuccess = {
             isLoading = false
             navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
         }, onFailure = {
@@ -59,10 +59,10 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
             Text(text = "Login", style = AppTheme.typography.bold36)
             Spacer(ItemPaddings.large)
             AppTextField(
-                text = email,
-                label = "Email",
-                onTextChanged = { email = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                text = number,
+                label = "Phone Number",
+                onTextChanged = { number = it },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = {
 
                 })

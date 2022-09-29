@@ -4,7 +4,6 @@ import android.content.Context
 import com.app.ultraplus.base.safeExecute
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.User
-import com.app.ultraplus.util.Constant
 import com.app.ultraplus.util.FsConstant
 import com.app.ultraplus.util.await
 import com.google.firebase.auth.FirebaseAuth
@@ -20,30 +19,32 @@ class AuthUseCase @Inject constructor(
 
     suspend fun registerUser(user: User, onSuccess: (User) -> Unit, onFailure: (String) -> Unit) =
         safeExecute(onFailure) {
-            val firebaseUser =
-                auth.createUserWithEmailAndPassword(user.email, user.password).await()
-            val newUser = user.copy(userId = firebaseUser.user?.uid!!, createdOn = Date())
+            val docID = fireStore.collection(FsConstant.USER_CL).document().id
+            val newUser = user.copy(userId = docID, createdOn = Date())
 
             fireStore.collection(FsConstant.USER_CL).document(newUser.userId).set(newUser).await()
-            auth.signInWithEmailAndPassword(newUser.email, newUser.password).await()
             UserPref.setUser(newUser)
             onSuccess(newUser)
         }
 
     suspend fun loginUser(
-        email: String,
+        number: String,
         password: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) =
         safeExecute(onFailure) {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            val document =
-                fireStore.collection(FsConstant.USER_CL).document(result.user!!.uid).get().await()
-            if (document.exists()) {
-                UserPref.setUser(document.toObject(User::class.java)!!)
+            val user =
+                fireStore.collection(FsConstant.USER_CL).whereEqualTo("phone_number", number)
+                    .whereEqualTo("password", password).get().await()
+            if (user.documents.isNotEmpty()) {
+                val document = user.documents.firstOrNull()
+
+                UserPref.setUser(document?.toObject(User::class.java)!!)
                 onSuccess()
-            } else onFailure("Error 601 : User doesn't exist in DB")
+            } else {
+                onFailure("Error 601 : User doesn't exist in DB")
+            }
         }
 
     suspend fun fetchUser(userId: String, onSuccess: (User) -> Unit, onFailure: (String) -> Unit) =
