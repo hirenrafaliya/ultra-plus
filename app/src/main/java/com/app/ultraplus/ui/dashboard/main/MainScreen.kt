@@ -49,44 +49,27 @@ fun MainContainer(
     navHostController: NavHostController,
     viewModel: MainViewModel
 ) {
+    fun getFadeIn() = fadeIn(animationSpec = tween(800))
+    fun getFadeOut() = fadeOut(animationSpec = tween(800))
+
     AnimatedVisibility(
         visible = currentSelected == "Feedback",
-        enter = slideIn(
-            animationSpec = tween(800),
-            initialOffset = { IntOffset(-it.width, 0) }) + fadeIn(
-            animationSpec = tween(
-                800
-            )
-        ),
-        exit = slideOut(
-            animationSpec = tween(800),
-            targetOffset = { IntOffset(-it.width, 0) }) + fadeOut(
-            animationSpec = tween(
-                800
-            )
-        )
+        enter = getFadeIn(),
+        exit = getFadeOut()
     ) {
         FeedbackListContainer(modifier = Modifier, navHostController, viewModel)
     }
     AnimatedVisibility(
         visible = currentSelected == "Reimbursement",
-        enter = slideIn(
-            animationSpec = tween(800),
-            initialOffset = { IntOffset(it.width, 0) }) + fadeIn(animationSpec = tween(800)),
-        exit = slideOut(
-            animationSpec = tween(800),
-            targetOffset = { IntOffset(it.width, 0) }) + fadeOut(animationSpec = tween(800))
+        enter = getFadeIn(),
+        exit = getFadeOut()
     ) {
         ReimbursementListContainer(modifier = Modifier, navHostController, viewModel)
     }
     AnimatedVisibility(
         visible = currentSelected == "Profile",
-        enter = slideIn(
-            animationSpec = tween(800),
-            initialOffset = { IntOffset(it.width, 0) }) + fadeIn(animationSpec = tween(800)),
-        exit = slideOut(
-            animationSpec = tween(800),
-            targetOffset = { IntOffset(it.width, 0) }) + fadeOut(animationSpec = tween(800))
+        enter = getFadeIn(),
+        exit = getFadeOut()
     ) {
         ProfileScreen(modifier = Modifier, navHostController, viewModel)
     }
