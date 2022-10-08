@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.app.ultraplus.ui.admin.main.AdminMainScreen
 import com.app.ultraplus.ui.auth.LoginScreen
 import com.app.ultraplus.ui.auth.RegisterScreen
 import com.app.ultraplus.ui.auth.SplashScreen
@@ -45,6 +46,9 @@ fun SetUpNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.FeedbackDetailScreen.route) {
             FeedbackDetailScreen(navHostController = navController, viewModel = mainViewModel)
+        }
+        composable(route = Screen.AdminScreen.route) {
+            AdminMainScreen(navHostController = navController, viewModel = mainViewModel)
         }
     }
 }

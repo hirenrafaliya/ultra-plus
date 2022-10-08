@@ -15,5 +15,8 @@ sealed class Screen(val route: String) {
 
     object FeedbackDetailScreen : Screen("feedback_detail_screen")
 
+    /* Admin Screens */
+    object AdminScreen : Screen("admin_main_screen")
+
 
 }
