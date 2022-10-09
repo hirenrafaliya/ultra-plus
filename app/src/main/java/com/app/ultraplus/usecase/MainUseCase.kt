@@ -50,10 +50,14 @@ class MainUseCase @Inject constructor(
             val query = when (UserPref.getUser().userType) {
                 UserType.REPORTING_MANAGER.text -> {
                     val areaManagers = fireStore.collection(FsConstant.USER_CL)
-                        .whereEqualTo("reporting_manager_id", UserPref.getUser().reportingMangerId)
+                        .whereEqualTo("reporting_manager_id", UserPref.getUser().userId)
                         .get().await()
                     val areaManagerIds = areaManagers.map { it.id }
-                    colRef.whereIn("created_by", areaManagerIds)
+                    if (!areaManagers.isEmpty) colRef.whereIn("created_by", areaManagerIds)
+                    else {
+                        onSuccess(listOf())
+                        return@safeExecute
+                    }
                 }
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
@@ -70,11 +74,17 @@ class MainUseCase @Inject constructor(
             onSuccess(feedbacks)
         }
 
-    suspend fun getFeedbacks(startDate: Date,endDate: Date,onSuccess: (List<Feedback>) -> Unit, onFailure: (String) -> Unit) =
+    suspend fun getFeedbacks(
+        startDate: Date,
+        endDate: Date,
+        onSuccess: (List<Feedback>) -> Unit,
+        onFailure: (String) -> Unit
+    ) =
         safeExecute(onFailure) {
             val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
 
-            val query = colRef.whereGreaterThanOrEqualTo("created_on",startDate).whereLessThanOrEqualTo("created_on",endDate)
+            val query = colRef.whereGreaterThanOrEqualTo("created_on", startDate)
+                .whereLessThanOrEqualTo("created_on", endDate)
 
             val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
             val feedbacks = if (!documents.isEmpty) {
@@ -87,11 +97,17 @@ class MainUseCase @Inject constructor(
             onSuccess(feedbacks)
         }
 
-    suspend fun getReimbursement(startDate: Date,endDate: Date,onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) =
+    suspend fun getReimbursement(
+        startDate: Date,
+        endDate: Date,
+        onSuccess: (List<Reimbursement>) -> Unit,
+        onFailure: (String) -> Unit
+    ) =
         safeExecute(onFailure) {
             val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
 
-            val query = colRef.whereGreaterThanOrEqualTo("created_on",startDate).whereLessThanOrEqualTo("created_on",endDate)
+            val query = colRef.whereGreaterThanOrEqualTo("created_on", startDate)
+                .whereLessThanOrEqualTo("created_on", endDate)
 
             val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
             val reimbursements = if (!documents.isEmpty) {
@@ -115,10 +131,14 @@ class MainUseCase @Inject constructor(
             val query = when (UserPref.getUser().userType) {
                 UserType.REPORTING_MANAGER.text -> {
                     val areaManagers = fireStore.collection(FsConstant.USER_CL)
-                        .whereEqualTo("reporting_manager_id", UserPref.getUser().reportingMangerId)
+                        .whereEqualTo("reporting_manager_id", UserPref.getUser().userId)
                         .get().await()
                     val areaManagerIds = areaManagers.map { it.id }
-                    colRef.whereIn("created_by", areaManagerIds)
+                    if(!areaManagers.isEmpty) colRef.whereIn("created_by", areaManagerIds)
+                    else {
+                        onSuccess(listOf())
+                        return@safeExecute
+                    }
                 }
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)

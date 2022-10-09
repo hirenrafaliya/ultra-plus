@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.ultraplus.R
+import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.composable.AppButton
 import com.app.ultraplus.ui.composable.AppTextField
 import com.app.ultraplus.ui.composable.Spacer
@@ -50,6 +51,11 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
         isLoading = true
         viewModel.loginUser(number = number, password = password, onSuccess = {
             isLoading = false
+            if(it.userType == UserType.ADMIN.text){
+                navHostController.navigate(Screen.AdminScreen.route) { popUpTo(0) }
+                return@loginUser
+            }
+
             navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
         }, onFailure = {
             isLoading = false

@@ -30,7 +30,7 @@ class AuthUseCase @Inject constructor(
     suspend fun loginUser(
         number: String,
         password: String,
-        onSuccess: () -> Unit,
+        onSuccess: (User) -> Unit,
         onFailure: (String) -> Unit
     ) =
         safeExecute(onFailure) {
@@ -39,11 +39,11 @@ class AuthUseCase @Inject constructor(
                     .whereEqualTo("password", password).get().await()
             if (user.documents.isNotEmpty()) {
                 val document = user.documents.firstOrNull()
-
-                UserPref.setUser(document?.toObject(User::class.java)!!)
-                onSuccess()
+                val user = document?.toObject(User::class.java)!!
+                UserPref.setUser(user)
+                onSuccess(user)
             } else {
-                onFailure("Error 601 : User doesn't exist in DB")
+                onFailure("User doesn't exist in DB")
             }
         }
 
@@ -54,7 +54,7 @@ class AuthUseCase @Inject constructor(
             UserPref.setUser(user)
 
             if (document.exists()) onSuccess(user)
-            else onFailure("Error 602 : User doesn't exist in DB")
+            else onFailure("User doesn't exist in DB")
         }
 
 }

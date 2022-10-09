@@ -6,10 +6,12 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import com.app.ultraplus.network.model.User
 import com.app.ultraplus.network.model.UserStatus
 import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.composable.Spacer
+import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
@@ -44,6 +47,14 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
     var isShowChangeManagerDialog by remember { mutableStateOf(false) }
     var currentSelectedUser: User? by remember { mutableStateOf(null) }
     val context = LocalContext.current
+
+    val onLogoutClicked = {
+        viewModel.logOut(onSuccess = {
+            navHostController.navigate(Screen.LoginScreen.route) { popUpTo(0) }
+        }, onFailure = {
+
+        })
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getUsers(onSuccess = {
@@ -62,13 +73,47 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
             contentPadding = PaddingValues(bottom = ItemPaddings.xxxLarge.dp),
         ) {
             item {
-                Column {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = Paddings.xSmall),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = "All Managers",
                         style = AppTheme.typography.bold22,
                         color = AppTheme.colors.TextBlackPrimary
                     )
-                    Spacer(space = ItemPaddings.xxSmall)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    )
+                    Row(
+                        Modifier
+                            .clickable { onLogoutClicked() }
+                            .background(
+                                color = AppTheme.colors.LightBluePrimary,
+                                shape = AppTheme.shapes.medium
+                            )
+                            .padding(horizontal = Paddings.small, vertical = Paddings.xSmall),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(12.dp),
+                            imageVector = Icons.Rounded.ExitToApp,
+                            contentDescription = "",
+                            tint = AppTheme.colors.BluePrimary
+                        )
+                        Spacer(space = 14)
+                        Text(
+                            text = "Logout",
+                            style = AppTheme.typography.semiBold12,
+                            color = AppTheme.colors.BluePrimary
+                        )
+                    }
+                    Spacer(space = 12)
                 }
             }
 
@@ -156,7 +201,12 @@ fun LazyItemScope.UserView(
                 .fillMaxWidth()
                 .padding(vertical = Paddings.xSmall, horizontal = Paddings.small)
         ) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
                     modifier = Modifier
                         .background(
@@ -229,7 +279,8 @@ fun LazyItemScope.UserView(
                         )
                         .clickable {
                             val currentStatus = user.status
-                            status = if (currentStatus == UserStatus.ACTIVE.text) UserStatus.INACTIVE.text else UserStatus.ACTIVE.text
+                            status =
+                                if (currentStatus == UserStatus.ACTIVE.text) UserStatus.INACTIVE.text else UserStatus.ACTIVE.text
                             val userCopy =
                                 user.copy(status = status)
 
