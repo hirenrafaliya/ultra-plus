@@ -59,12 +59,13 @@ fun FeedbackDetailScreen(navHostController: NavHostController, viewModel: MainVi
 fun FeedbackDetailScreenPreview(navHostController: NavHostController, viewModel: MainViewModel) {
     var feedback by remember { mutableStateOf(viewModel.selectedFeedback) }
     var comments by remember { mutableStateOf(listOf<Feedback.Comment>()) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getComments(feedback = feedback, onSuccess = {
             comments = it
         }, onFailure = {
-
+            Toast.makeText(context, "Error 706 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 
@@ -73,7 +74,7 @@ fun FeedbackDetailScreenPreview(navHostController: NavHostController, viewModel:
         viewModel.updateStatus(feedback = feedback, onSuccess = {
 
         }, onFailure = {
-
+            Toast.makeText(context, "Error 709 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 
@@ -87,7 +88,7 @@ fun FeedbackDetailScreenPreview(navHostController: NavHostController, viewModel:
         viewModel.addComment(feedback = feedback, comment = comment, onSuccess = {
             comments = comments.toMutableList().apply { add(0, comment) }.toList()
         }, onFailure = {
-
+            Toast.makeText(context, "Error 708 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 

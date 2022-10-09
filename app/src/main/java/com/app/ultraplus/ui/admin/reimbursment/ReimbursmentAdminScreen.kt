@@ -3,6 +3,7 @@ package com.app.ultraplus.ui.admin.reimbursment
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -44,7 +45,7 @@ fun ReimbursementAdminScreen(navHostController: NavHostController, viewModel: Ma
             viewModel.getReimbursement(startDate = startDate, endDate = endDate, onSuccess = {
                 viewModel.reimbursements = it
             }, onFailure = {
-
+                Toast.makeText(activity, "Error 705 : $it", Toast.LENGTH_SHORT).show()
             })
         }
 

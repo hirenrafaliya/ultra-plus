@@ -1,6 +1,7 @@
 package com.app.ultraplus.ui.dashboard.reimbursement
 
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -40,13 +42,14 @@ fun ReimbursementListContainer(
     viewModel: MainViewModel
 ) {
 
+    val context = LocalContext.current
     val user by remember { mutableStateOf(UserPref.getUser()) }
 
     LaunchedEffect(Unit) {
         viewModel.getReimbursements(onSuccess = {
             viewModel.reimbursements = it
         }, onFailure = {
-
+            Toast.makeText(context, "Error 706 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 

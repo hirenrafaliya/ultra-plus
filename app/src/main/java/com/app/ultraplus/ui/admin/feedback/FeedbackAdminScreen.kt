@@ -1,22 +1,22 @@
 package com.app.ultraplus.ui.admin.feedback
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
+import android.os.Environment
+import android.util.Log
 import android.widget.DatePicker
-import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.app.ultraplus.BuildConfig
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.ui.composable.Spacer
 import com.app.ultraplus.ui.dashboard.feedback.feedbackList
@@ -25,6 +25,7 @@ import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.util.inShortDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
+import org.library.worksheet.cellstyles.WorkSheet
 import java.util.Calendar
 import java.util.Date
 
@@ -32,7 +33,7 @@ import java.util.Date
 fun FeedbackAdminScreen(navHostController: NavHostController, viewModel: MainViewModel) {
     val user by remember { mutableStateOf(UserPref.getUser()) }
 
-    val activity = LocalContext.current
+    val context = LocalContext.current
     var startDate by remember { mutableStateOf(Calendar.getInstance().apply {
         this[Calendar.DAY_OF_MONTH] = 1
         this[Calendar.MONTH] = 1
@@ -47,12 +48,12 @@ fun FeedbackAdminScreen(navHostController: NavHostController, viewModel: MainVie
             viewModel.getFeedbacks(startDate = startDate, endDate = endDate, onSuccess = {
                 viewModel.feedbacks = it
             }, onFailure = {
-
+                Toast.makeText(context, "Error 704 : $it", Toast.LENGTH_SHORT).show()
             })
         }
 
     val onClickStartDate: () -> Unit = {
-        selectDate(activity) {
+        selectDate(context) {
             startDate = it
             startDateDisplay = startDate.inShortDisplayFormat()
 
@@ -60,11 +61,22 @@ fun FeedbackAdminScreen(navHostController: NavHostController, viewModel: MainVie
         }
     }
     val onClickEndDate: () -> Unit = {
-        selectDate(activity) {
+        selectDate(context) {
             endDate = it
             endDateDisplay = endDate.inShortDisplayFormat()
 
             getFeedbacks()
+        }
+    }
+
+    val onClickExport:() -> Unit = {
+        try {
+            val asd = WorkSheet.Builder(context, "ExternalFilePath/asd")
+            .setSheet(viewModel.feedbacks)
+                .writeSheet()
+            Log.d("TAGER", "FeedbackAdminScreen: ${asd.getpath()}")
+        } catch (e:Exception) {
+            Log.d("TAGER", "FeedbackAdminScreen: ${e.message}")
         }
     }
 
@@ -142,7 +154,7 @@ fun FeedbackAdminScreen(navHostController: NavHostController, viewModel: MainVie
                                 color = AppTheme.colors.BluePrimary,
                                 shape = AppTheme.shapes.medium
                             )
-                            .clickable { }
+                            .clickable { onClickExport() }
                             .padding(
                                 horizontal = Paddings.small,
                                 vertical = Paddings.xxSmall

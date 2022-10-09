@@ -1,5 +1,6 @@
 package com.app.ultraplus.ui.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,6 +39,7 @@ fun RegisterScreen(navHostController: NavHostController, viewModel: AuthViewMode
 fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthViewModel) {
     val userTypes = listOf(UserType.AREA_MANAGER.display, UserType.REPORTING_MANAGER.display)
 
+    val context = LocalContext.current
     var userType by remember { mutableStateOf(userTypes[0]) }
     var name by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
@@ -69,6 +72,7 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
             navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
         }, onFailure = {
             isLoading = false
+            Toast.makeText(context, "Error 603 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 

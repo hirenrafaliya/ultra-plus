@@ -1,5 +1,6 @@
 package com.app.ultraplus.ui.dashboard.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.ultraplus.local.UserPref
@@ -29,13 +31,14 @@ fun ProfileScreen(
     viewModel: MainViewModel
 ) {
     val user by remember { mutableStateOf(UserPref.getUser()) }
+    val context = LocalContext.current
 
     val onLogOutClicked: () -> Unit = {
         viewModel.logOut(onSuccess = {
             navHostController.clearBackStack(0)
             navHostController.navigate(Screen.LoginScreen.route)
         }, onFailure = {
-
+            Toast.makeText(context, "Error 710 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 

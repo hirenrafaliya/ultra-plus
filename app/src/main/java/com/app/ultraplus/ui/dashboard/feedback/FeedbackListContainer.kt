@@ -3,6 +3,7 @@ package com.app.ultraplus.ui.dashboard.feedback
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -47,12 +49,13 @@ fun FeedbackListContainer(
 ) {
 
     val user by remember { mutableStateOf(UserPref.getUser()) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getFeedbacks(onSuccess = {
             viewModel.feedbacks = it
         }, onFailure = {
-
+            Toast.makeText(context, "Error 703 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 

@@ -1,5 +1,6 @@
 package com.app.ultraplus.ui.dashboard.reimbursement
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ fun AddReimbursementScreen(navHostController: NavHostController, viewModel: Main
 @Composable
 fun AddReimbursementScreenPreview(navHostController: NavHostController, viewModel: MainViewModel) {
 
+    val context = LocalContext.current
     var isLoading by remember { mutableStateOf(false) }
     var distance by remember { mutableStateOf("0.0") }
 
@@ -53,6 +56,7 @@ fun AddReimbursementScreenPreview(navHostController: NavHostController, viewMode
             navHostController.popBackStack()
         }, onFailure = {
             isLoading = false
+            Toast.makeText(context, "Error 702 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 

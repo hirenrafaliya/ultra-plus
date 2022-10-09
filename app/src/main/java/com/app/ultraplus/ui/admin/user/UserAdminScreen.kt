@@ -1,6 +1,7 @@
 package com.app.ultraplus.ui.admin.user
 
 import android.view.animation.CycleInterpolator
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,12 +43,13 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
 
     var isShowChangeManagerDialog by remember { mutableStateOf(false) }
     var currentSelectedUser: User? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getUsers(onSuccess = {
             viewModel.users = it
         }, onFailure = {
-
+            Toast.makeText(context, "Error 707 : $it", Toast.LENGTH_SHORT).show()
         })
     }
 
@@ -83,7 +86,7 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
 
                         },
                         onFailure = {
-
+                            Toast.makeText(context, "Error 711 : $it", Toast.LENGTH_SHORT).show()
                         })
                 })
             }
@@ -108,7 +111,7 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
                         isShowChangeManagerDialog = false
                     },
                     onFailure = {
-
+                        Toast.makeText(context, "Error 712 : $it", Toast.LENGTH_SHORT).show()
                     })
             }
         ) { isShowChangeManagerDialog = false }
