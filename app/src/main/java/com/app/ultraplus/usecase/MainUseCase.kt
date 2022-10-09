@@ -87,6 +87,23 @@ class MainUseCase @Inject constructor(
             onSuccess(feedbacks)
         }
 
+    suspend fun getReimbursement(startDate: Date,endDate: Date,onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
+
+            val query = colRef.whereGreaterThanOrEqualTo("created_on",startDate).whereLessThanOrEqualTo("created_on",endDate)
+
+            val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
+            val reimbursements = if (!documents.isEmpty) {
+                documents.toObjects(Reimbursement::class.java).apply {
+                    forEachIndexed { index, value ->
+                        value.id = documents.documents[index].id
+                    }
+                }
+            } else listOf<Reimbursement>()
+            onSuccess(reimbursements)
+        }
+
 
     suspend fun getReimbursements(
         onSuccess: (List<Reimbursement>) -> Unit,

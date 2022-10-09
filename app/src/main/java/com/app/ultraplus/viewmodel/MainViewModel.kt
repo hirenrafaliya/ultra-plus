@@ -56,6 +56,16 @@ class MainViewModel @Inject constructor(
             useCase.getFeedbacks(startDate, endDate, onSuccess, onFailure)
         }
 
+    fun getReimbursement(
+        startDate: Date,
+        endDate: Date,
+        onSuccess: (List<Reimbursement>) -> Unit,
+        onFailure: (String) -> Unit
+    ) =
+        viewModelScope.launch {
+            useCase.getReimbursement(startDate, endDate, onSuccess, onFailure)
+        }
+
     fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) =
         viewModelScope.launch {
             useCase.getReimbursements(onSuccess, onFailure)

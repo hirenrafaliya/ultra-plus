@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.app.ultraplus.ui.admin.feedback.FeedbackAdminScreen
+import com.app.ultraplus.ui.admin.reimbursment.ReimbursementAdminScreen
 import com.app.ultraplus.ui.admin.user.UserAdminScreen
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
 import com.app.ultraplus.ui.dashboard.main.BottomBar
@@ -63,11 +64,7 @@ fun AdminMainContainer(
         enter = getFadeIn(),
         exit = getFadeOut()
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Blue)
-        )
+        ReimbursementAdminScreen(navHostController = navHostController, viewModel = viewModel)
     }
     AnimatedVisibility(
         visible = currentSelected == "Manager",
