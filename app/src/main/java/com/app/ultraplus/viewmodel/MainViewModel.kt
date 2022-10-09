@@ -11,6 +11,7 @@ import com.app.ultraplus.network.model.User
 import com.app.ultraplus.usecase.MainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,6 +44,16 @@ class MainViewModel @Inject constructor(
     fun getFeedbacks(onSuccess: (List<Feedback>) -> Unit, onFailure: (String) -> Unit) =
         viewModelScope.launch {
             useCase.getFeedbacks(onSuccess, onFailure)
+        }
+
+    fun getFeedbacks(
+        startDate: Date,
+        endDate: Date,
+        onSuccess: (List<Feedback>) -> Unit,
+        onFailure: (String) -> Unit
+    ) =
+        viewModelScope.launch {
+            useCase.getFeedbacks(startDate, endDate, onSuccess, onFailure)
         }
 
     fun getReimbursements(onSuccess: (List<Reimbursement>) -> Unit, onFailure: (String) -> Unit) =

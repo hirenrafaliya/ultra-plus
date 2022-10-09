@@ -42,3 +42,5 @@ suspend fun <T> Task<T>.await(): T {
 fun Exception.messageOrDefault() = this.message ?: Constant.UNKNOWN_ERROR_TEXT
 
 fun Date.inDisplayFormat(): String = SimpleDateFormat("dd MMMM hh:mm a").format(this)
+
+fun Date.inShortDisplayFormat(): String = SimpleDateFormat("dd MMM").format(this)

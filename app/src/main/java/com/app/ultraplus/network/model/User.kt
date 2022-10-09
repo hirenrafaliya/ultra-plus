@@ -28,7 +28,7 @@ data class User(
         fun getStatusColor(status: String) = when (status) {
             UserStatus.PENDING.text -> AppTheme.colors.StatusRed
             UserStatus.ACTIVE.text -> AppTheme.colors.StatusGreen
-            UserStatus.INACTIVE.text -> AppTheme.colors.StatusYellow
+            UserStatus.INACTIVE.text -> AppTheme.colors.StatusRed
             else -> AppTheme.colors.StatusRed
         }
     }

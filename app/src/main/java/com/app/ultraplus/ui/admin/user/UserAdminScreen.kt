@@ -10,10 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -237,7 +234,7 @@ fun LazyItemScope.UserView(
                         }
                         .padding(horizontal = Paddings.small, vertical = Paddings.xSmall)
                         .size(12.dp),
-                    imageVector = Icons.Rounded.Refresh,
+                    imageVector = Icons.Rounded.Lock,
                     contentDescription = "",
                     tint = AppTheme.colors.BluePrimary
                 )
@@ -245,7 +242,7 @@ fun LazyItemScope.UserView(
                 Text(
                     modifier = Modifier,
                     text = status.uppercase(),
-                    style = AppTheme.typography.bold16.copy(color = User.getStatusColor(status = user.status))
+                    style = AppTheme.typography.bold12.copy(color = User.getStatusColor(status = user.status))
                 )
             }
             Spacer(space = 4)

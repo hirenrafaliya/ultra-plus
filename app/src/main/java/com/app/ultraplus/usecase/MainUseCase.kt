@@ -1,6 +1,7 @@
 package com.app.ultraplus.usecase
 
 import android.content.Context
+import android.util.Log
 import com.app.ultraplus.base.safeExecute
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import java.util.Date
 import javax.inject.Inject
 
 class MainUseCase @Inject constructor(
@@ -56,6 +58,23 @@ class MainUseCase @Inject constructor(
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
             }
+
+            val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
+            val feedbacks = if (!documents.isEmpty) {
+                documents.toObjects(Feedback::class.java).apply {
+                    forEachIndexed { index, value ->
+                        value.id = documents.documents[index].id
+                    }
+                }
+            } else listOf<Feedback>()
+            onSuccess(feedbacks)
+        }
+
+    suspend fun getFeedbacks(startDate: Date,endDate: Date,onSuccess: (List<Feedback>) -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
+
+            val query = colRef.whereGreaterThanOrEqualTo("created_on",startDate).whereLessThanOrEqualTo("created_on",endDate)
 
             val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
             val feedbacks = if (!documents.isEmpty) {
@@ -162,9 +181,6 @@ class MainUseCase @Inject constructor(
                 documents.toObjects(User::class.java).apply {
                     forEachIndexed { index, value ->
                         value.id = documents.documents[index].id
-
-                        val reportingManagerDoc = fireStore.collection(FsConstant.USER_CL)
-                            .whereArrayContains("assigned_managers", value.id).get().await()
                     }
                 }
             } else listOf<User>()

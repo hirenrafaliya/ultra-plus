@@ -1,9 +1,11 @@
 package com.app.ultraplus.ui.dashboard.feedback
 
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -128,9 +130,7 @@ fun LazyItemScope.FeedbackView(feedback: Feedback, onClick: (Feedback) -> Unit) 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .animateItemPlacement(animationSpec = tween(800, easing = Easing {
-                OvershootInterpolator(4.0f).getInterpolation(it)
-            }))
+            .animateItemPlacement(animationSpec = tween(800, easing = FastOutSlowInEasing))
             .height(IntrinsicSize.Max)
             .padding(vertical = Paddings.xSmall)
             .shadow(elevation = 1.dp, shape = AppTheme.shapes.medium)
