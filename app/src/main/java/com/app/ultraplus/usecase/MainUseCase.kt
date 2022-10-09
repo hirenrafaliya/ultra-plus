@@ -5,12 +5,15 @@ import com.app.ultraplus.base.safeExecute
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.Reimbursement
+import com.app.ultraplus.network.model.User
 import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.util.FsConstant
 import com.app.ultraplus.util.await
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import javax.inject.Inject
 
 class MainUseCase @Inject constructor(
@@ -43,10 +46,13 @@ class MainUseCase @Inject constructor(
             val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
 
             val query = when (UserPref.getUser().userType) {
-                UserType.REPORTING_MANAGER.text -> colRef.whereIn(
-                    "created_by",
-                    UserPref.getUser().assignedManagers
-                )
+                UserType.REPORTING_MANAGER.text -> {
+                    val areaManagers = fireStore.collection(FsConstant.USER_CL)
+                        .whereEqualTo("reporting_manager_id", UserPref.getUser().reportingMangerId)
+                        .get().await()
+                    val areaManagerIds = areaManagers.map { it.id }
+                    colRef.whereIn("created_by", areaManagerIds)
+                }
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
             }
@@ -71,10 +77,13 @@ class MainUseCase @Inject constructor(
             val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
 
             val query = when (UserPref.getUser().userType) {
-                UserType.REPORTING_MANAGER.text -> colRef.whereIn(
-                    "created_by",
-                    UserPref.getUser().assignedManagers
-                )
+                UserType.REPORTING_MANAGER.text -> {
+                    val areaManagers = fireStore.collection(FsConstant.USER_CL)
+                        .whereEqualTo("reporting_manager_id", UserPref.getUser().reportingMangerId)
+                        .get().await()
+                    val areaManagerIds = areaManagers.map { it.id }
+                    colRef.whereIn("created_by", areaManagerIds)
+                }
                 UserType.ADMIN.text -> colRef
                 else -> colRef.whereEqualTo("created_by", UserPref.getUser().userId)
             }
@@ -143,4 +152,34 @@ class MainUseCase @Inject constructor(
 
             onSuccess()
         }
+
+    suspend fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (String) -> Unit) =
+        safeExecute(onFailure) {
+            val documents = fireStore.collection(FsConstant.USER_CL)
+                .orderBy("created_on", Query.Direction.DESCENDING).get().await()
+
+            val users = if (!documents.isEmpty) {
+                documents.toObjects(User::class.java).apply {
+                    forEachIndexed { index, value ->
+                        value.id = documents.documents[index].id
+
+                        val reportingManagerDoc = fireStore.collection(FsConstant.USER_CL)
+                            .whereArrayContains("assigned_managers", value.id).get().await()
+                    }
+                }
+            } else listOf<User>()
+            onSuccess(users)
+        }
+
+    suspend fun assignReportingManager(
+        areaManager: User,
+        onSuccess: (User) -> Unit,
+        onFailure: (String) -> Unit
+    ) = safeExecute(onFailure) {
+        fireStore.collection(FsConstant.USER_CL).document(areaManager.id).set(
+            areaManager,
+            SetOptions.merge()
+        ).await()
+        onSuccess(areaManager)
+    }
 }

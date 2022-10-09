@@ -1,5 +1,7 @@
 package com.app.ultraplus.network.model
 
+import androidx.compose.runtime.Composable
+import com.app.ultraplus.ui.theme.AppTheme
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import java.util.*
@@ -16,9 +18,20 @@ data class User(
     @field:[JvmField PropertyName("fcm_token")] val fcmToken: String = "",
     @field:[JvmField PropertyName("email")] val email: String = "",
     @field:[JvmField PropertyName("bio")] val bio: String = "",
-    @field:[JvmField PropertyName("assigned_managers")] val assignedManagers: List<String> = listOf()
+    @field:[JvmField PropertyName("reporting_manager_id")] var reportingMangerId: String = "",
+    @field:[JvmField PropertyName("reporting_manager_name")] var reportingMangerName: String = ""
 ) {
     constructor() : this("")
+
+    companion object {
+        @Composable
+        fun getStatusColor(status: String) = when (status) {
+            UserStatus.PENDING.text -> AppTheme.colors.StatusRed
+            UserStatus.ACTIVE.text -> AppTheme.colors.StatusGreen
+            UserStatus.INACTIVE.text -> AppTheme.colors.StatusYellow
+            else -> AppTheme.colors.StatusRed
+        }
+    }
 }
 
 enum class UserStatus(val text: String) {

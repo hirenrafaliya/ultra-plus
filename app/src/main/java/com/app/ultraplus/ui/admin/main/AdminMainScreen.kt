@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
+import com.app.ultraplus.ui.admin.feedback.FeedbackAdminScreen
+import com.app.ultraplus.ui.admin.user.UserAdminScreen
 import com.app.ultraplus.ui.dashboard.feedback.FeedbackListContainer
 import com.app.ultraplus.ui.dashboard.main.BottomBar
 import com.app.ultraplus.ui.dashboard.main.MainContainer
@@ -20,14 +22,17 @@ import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.viewmodel.MainViewModel
 
 @Composable
-fun AdminMainScreen(navHostController: NavHostController, viewModel: MainViewModel)
-{
+fun AdminMainScreen(navHostController: NavHostController, viewModel: MainViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = AppTheme.colors.WhitePrimary)
     ) {
-        AdminMainContainer(viewModel.currentSelectedBottomBarItem.value, navHostController, viewModel)
+        AdminMainContainer(
+            viewModel.currentSelectedBottomBarItem.value,
+            navHostController,
+            viewModel
+        )
 
         AdminBottomBar(currentSelected = viewModel.currentSelectedBottomBarItem.value,
             onSelectionChanged = {
@@ -51,20 +56,24 @@ fun AdminMainContainer(
         enter = getFadeIn(),
         exit = getFadeOut()
     ) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Cyan))
+        FeedbackAdminScreen(navHostController = navHostController, viewModel = viewModel)
     }
     AnimatedVisibility(
         visible = currentSelected == "Reimbursement",
         enter = getFadeIn(),
         exit = getFadeOut()
     ) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Blue))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Blue)
+        )
     }
     AnimatedVisibility(
         visible = currentSelected == "Manager",
         enter = getFadeIn(),
         exit = getFadeOut()
     ) {
-        Box(modifier = Modifier.fillMaxSize().background(Color.Gray))
+        UserAdminScreen(navHostController, viewModel)
     }
 }

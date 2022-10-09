@@ -37,7 +37,6 @@ fun AppTheme(
         colorScheme = AppTheme.colors.materialColors
     ) {
         CompositionLocalProvider(
-            LocalRippleTheme provides AppRippleTheme,
             LocalColors provides themeColor,
             LocalTypography provides AppTheme.typography,
             LocalShapes provides AppTheme.shapes
@@ -45,15 +44,15 @@ fun AppTheme(
     }
 }
 
-private object AppRippleTheme : RippleTheme {
-
-    @Composable
-    override fun defaultColor(): Color = AppTheme.colors.BluePrimary
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
-        AppTheme.colors.BluePrimary,
-        lightTheme = !isSystemInDarkTheme()
-    )
-
-}
+//private object AppRippleTheme : RippleTheme {
+//
+//    @Composable
+//    override fun defaultColor(): Color = AppTheme.colors.BluePrimary
+//
+//    @Composable
+//    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
+//        AppTheme.colors.BluePrimary,
+//        lightTheme = !isSystemInDarkTheme()
+//    )
+//
+//}

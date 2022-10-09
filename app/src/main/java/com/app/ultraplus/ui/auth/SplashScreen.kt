@@ -9,19 +9,22 @@ import com.app.ultraplus.viewmodel.AuthViewModel
 
 @Composable
 fun SplashScreen(navHostController: NavHostController, viewModel: AuthViewModel) {
-
-    LaunchedEffect(true) {
-        if (UserPref.isLoggedIn()) {
-            viewModel.fetchUser(userId = UserPref.getUser().userId, onSuccess = {
-                navHostController.popBackStack()
-                navHostController.navigate(Screen.MainScreen.route)
-            }, onFailure = {
-
-            })
-        } else {
-            navHostController.popBackStack()
-            navHostController.navigate(Screen.LoginScreen.route)
-        }
-
-    }
+    navHostController.popBackStack()
+    navHostController.navigate(Screen.AdminScreen.route)
+//    LaunchedEffect(true) {
+//        if (UserPref.isLoggedIn()) {
+//            viewModel.fetchUser(userId = UserPref.getUser().userId, onSuccess = {
+//                // TODO : Check for user active status
+//                navHostController.popBackStack()
+//                // TODO : Handle for admin & managers
+//                navHostController.navigate(Screen.MainScreen.route)
+//            }, onFailure = {
+//
+//            })
+//        } else {
+//            navHostController.popBackStack()
+//            navHostController.navigate(Screen.LoginScreen.route)
+//        }
+//
+//    }
 }
