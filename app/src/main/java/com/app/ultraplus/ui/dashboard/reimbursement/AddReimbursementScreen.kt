@@ -41,12 +41,17 @@ fun AddReimbursementScreenPreview(navHostController: NavHostController, viewMode
 
     val onAddReimbursementClicked: () -> Unit = {
         val currentDate = Date()
+        val disFloat = try {
+             String.format("%.2f", distance.toFloat()).toFloat()
+        } catch (e:Exception){
+            distance.toFloatOrNull() ?: 0.0f
+        }
         val reimbursement = Reimbursement(
             createdOn = currentDate,
             updatedOn = currentDate,
             createdBy = UserPref.getUser().userId,
             userName = UserPref.getUser().userName,
-            distance = distance.toFloatOrNull() ?: 0.0f,
+            distance = disFloat,
             unit = "Kilometer"
         )
 
@@ -88,11 +93,7 @@ fun AddReimbursementScreenPreview(navHostController: NavHostController, viewMode
                     text = distance,
                     label = "Distance",
                     onTextChanged = {
-                        try {
-                            distance = String.format("%.2f", it)
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Please enter valid decimal number ex. 12.56", Toast.LENGTH_SHORT).show()
-                        }
+                        distance = it
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
