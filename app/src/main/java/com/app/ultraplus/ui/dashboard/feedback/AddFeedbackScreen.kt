@@ -61,14 +61,19 @@ fun AddFeedbackScreenPreview(navHostController: NavHostController, viewModel: Ma
             createdOn = currentDate,
             userName = UserPref.getUser().userName
         )
-        isLoading = true
-        viewModel.addFeedback(feedback = fb, onSuccess = {
-            isLoading = false
-            navHostController.popBackStack()
-        }, onFailure = {
-            isLoading = false
-            Toast.makeText(context, "Error 701 : $it", Toast.LENGTH_SHORT).show()
-        })
+        if (fb.shopName.isNotEmpty() && fb.ownerName.isNotEmpty() && fb.shopAddress.isNotEmpty() && fb.city.isNotEmpty() && fb.description.isNotEmpty()) {
+            isLoading = true
+            viewModel.addFeedback(feedback = fb, onSuccess = {
+                isLoading = false
+                navHostController.popBackStack()
+            }, onFailure = {
+                isLoading = false
+                Toast.makeText(context, "Error 701 : $it", Toast.LENGTH_SHORT).show()
+            })
+        } else {
+            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     Box(
@@ -89,28 +94,40 @@ fun AddFeedbackScreenPreview(navHostController: NavHostController, viewModel: Ma
                 text = shopName,
                 label = "Shop name",
                 onTextChanged = { shopName = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
                 text = shopKeeperName,
                 label = "Shopkeeper name",
                 onTextChanged = { shopKeeperName = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
                 text = shopKeeperNumber,
                 label = "Shopkeeper phone number",
                 onTextChanged = { shopKeeperNumber = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
                 text = address,
                 label = "Address",
                 onTextChanged = { address = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
             )
             Spacer(space = ItemPaddings.medium)
             Row(Modifier.fillMaxWidth()) {
@@ -122,7 +139,10 @@ fun AddFeedbackScreenPreview(navHostController: NavHostController, viewModel: Ma
                     text = city,
                     label = "City",
                     onTextChanged = { city = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    )
                 )
 
                 AppTextField(
@@ -133,7 +153,10 @@ fun AddFeedbackScreenPreview(navHostController: NavHostController, viewModel: Ma
                     text = postalCode,
                     label = "Postal code",
                     onTextChanged = { postalCode = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next)
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next
+                    )
                 )
             }
 

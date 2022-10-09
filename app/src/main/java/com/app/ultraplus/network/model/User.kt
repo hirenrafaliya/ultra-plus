@@ -13,7 +13,7 @@ data class User(
     @field:[JvmField PropertyName("user_name")] val userName: String = "",
     @field:[JvmField PropertyName("password")] val password: String = "",
     @field:[JvmField PropertyName("created_on")] val createdOn: Date = Date(),
-    @field:[JvmField PropertyName("status")] var status: String = UserStatus.PENDING.text,
+    @field:[JvmField PropertyName("status")] var status: String = UserStatus.INACTIVE.text,
     @field:[JvmField PropertyName("user_type")] val userType: String = "",
     @field:[JvmField PropertyName("fcm_token")] val fcmToken: String = "",
     @field:[JvmField PropertyName("email")] val email: String = "",

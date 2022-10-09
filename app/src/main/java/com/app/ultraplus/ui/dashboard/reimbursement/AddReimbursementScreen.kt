@@ -50,14 +50,19 @@ fun AddReimbursementScreenPreview(navHostController: NavHostController, viewMode
             unit = "Kilometer"
         )
 
-        isLoading = true
-        viewModel.addReimbursement(reimbursement = reimbursement, onSuccess = {
-            isLoading = false
-            navHostController.popBackStack()
-        }, onFailure = {
-            isLoading = false
-            Toast.makeText(context, "Error 702 : $it", Toast.LENGTH_SHORT).show()
-        })
+        if (reimbursement.distance != 0.0f) {
+            isLoading = true
+            viewModel.addReimbursement(reimbursement = reimbursement, onSuccess = {
+                isLoading = false
+                navHostController.popBackStack()
+            }, onFailure = {
+                isLoading = false
+                Toast.makeText(context, "Error 702 : $it", Toast.LENGTH_SHORT).show()
+            })
+        } else {
+            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     Box(
@@ -82,8 +87,17 @@ fun AddReimbursementScreenPreview(navHostController: NavHostController, viewMode
                         .padding(end = Paddings.small),
                     text = distance,
                     label = "Distance",
-                    onTextChanged = { distance = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next)
+                    onTextChanged = {
+                        try {
+                            distance = String.format("%.2f", it)
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Please enter valid decimal number ex. 12.56", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next
+                    )
                 )
 
                 AppTextField(

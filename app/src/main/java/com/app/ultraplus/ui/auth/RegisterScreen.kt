@@ -66,14 +66,20 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 password = password
             )
 
-        isLoading = true
-        viewModel.registerUser(user = user, onSuccess = {
-            isLoading = false
-            navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
-        }, onFailure = {
-            isLoading = false
-            Toast.makeText(context, "Error 603 : $it", Toast.LENGTH_SHORT).show()
-        })
+        if (user.phoneNumber.isNotEmpty() && user.userName.isNotEmpty() && user.email.isNotEmpty() && user.bio.isNotEmpty() && password.isNotEmpty() && confirmPassword == password) {
+            isLoading = true
+            viewModel.registerUser(user = user, onSuccess = {
+                isLoading = false
+                navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
+            }, onFailure = {
+                isLoading = false
+                Toast.makeText(context, "Error 603 : $it", Toast.LENGTH_SHORT).show()
+            })
+        } else {
+            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+            if (password != confirmPassword)
+                Toast.makeText(context, "Both passwords must be same", Toast.LENGTH_SHORT).show()
+        }
     }
 
     Box(
@@ -141,7 +147,8 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
-                )
+                ),
+                hideContent = true
             )
             Spacer(space = ItemPaddings.medium)
             AppTextField(
@@ -151,7 +158,8 @@ fun RegisterScreenPreview(navHostController: NavHostController, viewModel: AuthV
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
-                )
+                ),
+                hideContent = true
             )
             Spacer(space = ItemPaddings.large)
             AppButton(

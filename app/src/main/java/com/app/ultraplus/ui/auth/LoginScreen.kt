@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.ultraplus.R
+import com.app.ultraplus.network.model.UserStatus
 import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.composable.AppButton
 import com.app.ultraplus.ui.composable.AppTextField
@@ -48,19 +49,28 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
     }
 
     val onLoginClicked: () -> Unit = {
-        isLoading = true
-        viewModel.loginUser(number = number, password = password, onSuccess = {
-            isLoading = false
-            if(it.userType == UserType.ADMIN.text){
-                navHostController.navigate(Screen.AdminScreen.route) { popUpTo(0) }
-                return@loginUser
-            }
+        if(number.isNotEmpty() && password.isNotEmpty()){
+            isLoading = true
+            viewModel.loginUser(number = number, password = password, onSuccess = {
+                isLoading = false
+                if(it.status == UserStatus.INACTIVE.text) {
+                    Toast.makeText(context, "Status INACTIVE : Ask your admin to activate your account", Toast.LENGTH_LONG).show()
+                    return@loginUser
+                }
+                if(it.userType == UserType.ADMIN.text){
+                    navHostController.navigate(Screen.AdminScreen.route) { popUpTo(0) }
+                    return@loginUser
+                }
+                navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
+            }, onFailure = {
+                isLoading = false
+                Toast.makeText(context, "Error 604 : $it", Toast.LENGTH_SHORT).show()
+            })
+        }
+        else {
+            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+        }
 
-            navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
-        }, onFailure = {
-            isLoading = false
-            Toast.makeText(context, "Error 604 : $it", Toast.LENGTH_SHORT).show()
-        })
     }
 
     Box(
@@ -101,7 +111,8 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Go
                 ),
-                keyboardActions = KeyboardActions(onDone = { })
+                keyboardActions = KeyboardActions(onDone = { }),
+                hideContent = true
             )
             Spacer(ItemPaddings.xxLarge)
             AppButton(

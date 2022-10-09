@@ -19,6 +19,12 @@ class AuthUseCase @Inject constructor(
 
     suspend fun registerUser(user: User, onSuccess: (User) -> Unit, onFailure: (String) -> Unit) =
         safeExecute(onFailure) {
+            val docs = fireStore.collection(FsConstant.USER_CL).whereEqualTo("phone_number",user.phoneNumber).get().await()
+            if(!docs.isEmpty){
+                onFailure("User already exists")
+                return@safeExecute
+            }
+
             val docID = fireStore.collection(FsConstant.USER_CL).document().id
             val newUser = user.copy(userId = docID, createdOn = Date())
 

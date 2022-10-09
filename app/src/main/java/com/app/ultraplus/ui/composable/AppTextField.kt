@@ -11,6 +11,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.app.ultraplus.ui.theme.AppTheme
@@ -26,6 +28,7 @@ fun AppTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     multiLine: Boolean = false,
     enabled: Boolean = true,
+    hideContent: Boolean = false,
     trailingIcon: @Composable() (() -> Unit)? = null
 ) {
 
@@ -55,6 +58,7 @@ fun AppTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         enabled = enabled,
-        trailingIcon = trailingIcon
+        trailingIcon = trailingIcon,
+        visualTransformation = if (hideContent) PasswordVisualTransformation() else VisualTransformation.None
     )
 }

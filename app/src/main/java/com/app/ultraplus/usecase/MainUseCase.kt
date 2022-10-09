@@ -10,6 +10,8 @@ import com.app.ultraplus.network.model.User
 import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.util.FsConstant
 import com.app.ultraplus.util.await
+import com.app.ultraplus.util.endDayTime
+import com.app.ultraplus.util.startDayTime
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -83,8 +85,8 @@ class MainUseCase @Inject constructor(
         safeExecute(onFailure) {
             val colRef = fireStore.collection(FsConstant.FEEDBACK_CL)
 
-            val query = colRef.whereGreaterThanOrEqualTo("created_on", startDate)
-                .whereLessThanOrEqualTo("created_on", endDate)
+            val query = colRef.whereGreaterThanOrEqualTo("created_on", startDate.startDayTime())
+                .whereLessThanOrEqualTo("created_on", endDate.endDayTime())
 
             val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
             val feedbacks = if (!documents.isEmpty) {
@@ -106,8 +108,8 @@ class MainUseCase @Inject constructor(
         safeExecute(onFailure) {
             val colRef = fireStore.collection(FsConstant.REIMBURSEMENT_CL)
 
-            val query = colRef.whereGreaterThanOrEqualTo("created_on", startDate)
-                .whereLessThanOrEqualTo("created_on", endDate)
+            val query = colRef.whereGreaterThanOrEqualTo("created_on", startDate.startDayTime())
+                .whereLessThanOrEqualTo("created_on", endDate.endDayTime())
 
             val documents = query.orderBy("created_on", Query.Direction.DESCENDING).get().await()
             val reimbursements = if (!documents.isEmpty) {
