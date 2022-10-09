@@ -1,13 +1,10 @@
 package com.app.ultraplus.viewmodel
 
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.ultraplus.base.safeExecute
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.Reimbursement
 import com.app.ultraplus.network.model.User
@@ -86,7 +83,7 @@ class MainViewModel @Inject constructor(
         useCase.logOut(onSuccess, onFailure)
     }
 
-    fun assignReportingManager(
+    fun updateUser(
         areaManager: User,
         onSuccess: (User) -> Unit,
         onFailure: (String) -> Unit

@@ -1,5 +1,8 @@
 package com.app.ultraplus.ui.admin.user
 
+import android.view.animation.CycleInterpolator
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,7 +28,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.User
+import com.app.ultraplus.network.model.UserStatus
 import com.app.ultraplus.network.model.UserType
 import com.app.ultraplus.ui.composable.Spacer
 import com.app.ultraplus.ui.theme.AppTheme
@@ -69,6 +76,18 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
                 UserView(user = it, onClick = {}, {}, {
                     currentSelectedUser = it
                     isShowChangeManagerDialog = true
+                }, onChangeStatusClicked = {
+                    val index = viewModel.users.indexOfFirst { user -> it.id == user.id }
+                    viewModel.users[index].status = it.status
+
+                    viewModel.updateUser(
+                        areaManager = it,
+                        onSuccess = {
+
+                        },
+                        onFailure = {
+
+                        })
                 })
             }
         }
@@ -79,8 +98,11 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
             viewModel.users.filter { it.userType == UserType.REPORTING_MANAGER.text },
             currentSelectedUser,
             onReportingManagerSelected = {
-                currentSelectedUser = currentSelectedUser?.copy(reportingMangerId = it.id, reportingMangerName = it.userName)
-                viewModel.assignReportingManager(
+                currentSelectedUser = currentSelectedUser?.copy(
+                    reportingMangerId = it.id,
+                    reportingMangerName = it.userName
+                )
+                viewModel.updateUser(
                     areaManager = currentSelectedUser!!,
                     onSuccess = {
                         val index = viewModel.users.indexOfFirst { user -> it.id == user.id }
@@ -100,10 +122,16 @@ fun UserAdminScreen(navHostController: NavHostController, viewModel: MainViewMod
 fun LazyItemScope.UserView(
     user: User,
     onClick: (User) -> Unit,
-    onClickDialNumber: (String) -> Unit,
-    onEditReportingManagerClicked: (User) -> Unit
+    onClickDialNumber: (User) -> Unit,
+    onEditReportingManagerClicked: (User) -> Unit,
+    onChangeStatusClicked: (User) -> Unit
 ) {
-    val statusColor = User.getStatusColor(status = user.status)
+    var status by remember { mutableStateOf(user.status) }
+
+    val statusColor by animateColorAsState(
+        targetValue = User.getStatusColor(status),
+        animationSpec = tween(1000, easing = { CycleInterpolator(10f).getInterpolation(it) })
+    )
 
     Row(
         modifier = Modifier
@@ -135,7 +163,7 @@ fun LazyItemScope.UserView(
                             color = AppTheme.colors.LightBluePrimary,
                             shape = AppTheme.shapes.medium
                         )
-                        .clickable { onEditReportingManagerClicked(user) }
+                        .clickable { onClickDialNumber(user) }
                         .padding(horizontal = Paddings.small, vertical = Paddings.xSmall)
                         .size(12.dp),
                     imageVector = Icons.Rounded.Call,
@@ -190,6 +218,35 @@ fun LazyItemScope.UserView(
                         }
                     )
                 }
+            }
+            Spacer(space = 4)
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    modifier = Modifier
+                        .background(
+                            color = AppTheme.colors.LightBluePrimary,
+                            shape = AppTheme.shapes.medium
+                        )
+                        .clickable {
+                            val currentStatus = user.status
+                            status = if (currentStatus == UserStatus.ACTIVE.text) UserStatus.INACTIVE.text else UserStatus.ACTIVE.text
+                            val userCopy =
+                                user.copy(status = status)
+
+                            onChangeStatusClicked(userCopy)
+                        }
+                        .padding(horizontal = Paddings.small, vertical = Paddings.xSmall)
+                        .size(12.dp),
+                    imageVector = Icons.Rounded.Refresh,
+                    contentDescription = "",
+                    tint = AppTheme.colors.BluePrimary
+                )
+                Spacer(space = 12)
+                Text(
+                    modifier = Modifier,
+                    text = status.uppercase(),
+                    style = AppTheme.typography.bold16.copy(color = User.getStatusColor(status = user.status))
+                )
             }
             Spacer(space = 4)
             Text(
