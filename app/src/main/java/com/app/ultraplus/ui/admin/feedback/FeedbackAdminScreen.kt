@@ -25,7 +25,6 @@ import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.util.inShortDisplayFormat
 import com.app.ultraplus.viewmodel.MainViewModel
-import org.library.worksheet.cellstyles.WorkSheet
 import java.util.Calendar
 import java.util.Date
 
@@ -70,14 +69,6 @@ fun FeedbackAdminScreen(navHostController: NavHostController, viewModel: MainVie
     }
 
     val onClickExport:() -> Unit = {
-        try {
-            val asd = WorkSheet.Builder(context, "ExternalFilePath/asd")
-            .setSheet(viewModel.feedbacks)
-                .writeSheet()
-            Log.d("TAGER", "FeedbackAdminScreen: ${asd.getpath()}")
-        } catch (e:Exception) {
-            Log.d("TAGER", "FeedbackAdminScreen: ${e.message}")
-        }
     }
 
     LaunchedEffect(Unit) {

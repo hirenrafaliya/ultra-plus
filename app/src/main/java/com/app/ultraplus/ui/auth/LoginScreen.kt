@@ -43,6 +43,7 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
     var number by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf("") }
 
     val onRegisterClicked = {
         navHostController.navigate(Screen.RegisterScreen.route)
@@ -64,7 +65,7 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
                 navHostController.navigate(Screen.MainScreen.route) { popUpTo(0) }
             }, onFailure = {
                 isLoading = false
-                Toast.makeText(context, "Error 604 : $it", Toast.LENGTH_SHORT).show()
+                error = it
             })
         }
         else {
@@ -129,6 +130,12 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
             )
             AppButton(text = "Create a new account +", onClick = onRegisterClicked)
             Spacer(space = 60)
+            Text(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = error,
+                style = AppTheme.typography.semiBold15,
+                color = AppTheme.colors.StatusRed
+            )
         }
     }
 }
