@@ -46,6 +46,8 @@ fun Date.inDisplayFormat(): String = SimpleDateFormat("dd MMMM hh:mm a").format(
 
 fun Date.inShortDisplayFormat(): String = SimpleDateFormat("dd MMM").format(this)
 
+fun Date.inFormat(format: String): String = SimpleDateFormat(format).format(this)
+
 fun Date.startDayTime(): Date {
     val calender = Calendar.getInstance()
     calender.time = this

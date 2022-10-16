@@ -1,11 +1,8 @@
 package com.app.ultraplus.ui.dashboard.feedback
 
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
-import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,6 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,19 +27,26 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.app.ultraplus.local.UserPref
 import com.app.ultraplus.network.model.Feedback
 import com.app.ultraplus.network.model.UserType
-import com.app.ultraplus.ui.composable.AppFab
-import com.app.ultraplus.ui.composable.Spacer
+import com.app.ultraplus.ui.admin.feedback.selectDate
+import com.app.ultraplus.ui.admin.feedback.selectTime
+import com.app.ultraplus.ui.admin.user.SelectableReportingManagerView
+import com.app.ultraplus.ui.composable.*
 import com.app.ultraplus.ui.navigation.Screen
 import com.app.ultraplus.ui.theme.AppTheme
 import com.app.ultraplus.ui.theme.ItemPaddings
 import com.app.ultraplus.ui.theme.Paddings
 import com.app.ultraplus.util.inDisplayFormat
+import com.app.ultraplus.util.inFormat
+import com.app.ultraplus.util.inShortDisplayFormat
+import com.app.ultraplus.util.scheduleReminder
 import com.app.ultraplus.viewmodel.MainViewModel
 import io.iamjosephmj.flinger.bahaviours.StockFlingBehaviours
+import java.util.Calendar
 
 @Composable
 fun FeedbackListContainer(
@@ -50,6 +57,11 @@ fun FeedbackListContainer(
 
     val user by remember { mutableStateOf(UserPref.getUser()) }
     val context = LocalContext.current
+    var showReminderDialog by remember { mutableStateOf(false) }
+
+    val onClickReminder: () -> Unit = {
+        showReminderDialog = true
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getFeedbacks(onSuccess = {
@@ -71,23 +83,54 @@ fun FeedbackListContainer(
 
             item {
                 Column(Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Hello ${user.userName}",
-                        style = AppTheme.typography.regular15,
-                        color = AppTheme.colors.TextBlackPrimary
-                    )
-                    Text(
-                        text = "Good Afternoon",
-                        style = AppTheme.typography.semiBold22,
-                        color = AppTheme.colors.TextBlackPrimary
-                    )
-                    Spacer(space = ItemPaddings.xSmall)
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(color = AppTheme.colors.MidBlueSecondary)
-                    )
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Hello ${user.userName}",
+                                style = AppTheme.typography.regular15,
+                                color = AppTheme.colors.TextBlackPrimary
+                            )
+                            Text(
+                                text = "Good Afternoon",
+                                style = AppTheme.typography.semiBold22,
+                                color = AppTheme.colors.TextBlackPrimary
+                            )
+                            Spacer(space = ItemPaddings.xSmall)
+                            Spacer(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(1.dp)
+                                    .background(color = AppTheme.colors.MidBlueSecondary)
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .padding(12.dp)
+                                .background(
+                                    color = AppTheme.colors.LightBluePrimary,
+                                    shape = AppTheme.shapes.medium
+                                )
+                                .clickable { onClickReminder() }
+                                .padding(horizontal = Paddings.small, vertical = Paddings.xSmall),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(12.dp),
+                                imageVector = Icons.Rounded.Notifications,
+                                contentDescription = "",
+                                tint = AppTheme.colors.BluePrimary
+                            )
+                            Spacer(space = ItemPaddings.small)
+                            Text(
+                                text = "Reminder",
+                                color = AppTheme.colors.BluePrimary,
+                                style = AppTheme.typography.semiBold12
+                            )
+                        }
+                    }
+
                     Spacer(space = ItemPaddings.small)
                     Text(
                         text = "Feedbacks",
@@ -113,6 +156,87 @@ fun FeedbackListContainer(
             ) {
                 navHostController.navigate(Screen.AddFeedbackScreen.route)
             }
+    }
+
+    if (showReminderDialog) {
+        Dialog(onDismissRequest = { showReminderDialog = false }) {
+            ReminderDialog{
+                showReminderDialog = false
+            }
+        }
+    }
+}
+
+@Composable
+fun ReminderDialog(onClosed:()->Unit) {
+    var title by remember { mutableStateOf("") }
+    var showDateDialog by remember { mutableStateOf(false) }
+    var showTimeDialog by remember { mutableStateOf(false) }
+
+    var isDateSelected by remember { mutableStateOf(false) }
+    var isTimeSelected by remember { mutableStateOf(false) }
+
+    val date by remember {
+        mutableStateOf(Calendar.getInstance())
+    }
+
+    val context = LocalContext.current
+
+    DialogWindow(title = "Schedule Reminder") {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            AppTextField(text = title, label = "Title", onTextChanged = { title = it })
+            Spacer(space = 8)
+            Row(Modifier.fillMaxWidth()) {
+                AppButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    text = if (!isDateSelected) "Set Date" else date.time.inFormat("dd MMM")
+                ) {
+                    showDateDialog = true
+                }
+                Spacer(space = 4)
+                AppButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    text = if (!isTimeSelected) "Set Time" else date.time.inFormat("hh:mm")
+                ) {
+                    showTimeDialog = true
+                }
+            }
+            AppButton(text = "Set Reminder +") {
+                if (isDateSelected && isTimeSelected) {
+                    scheduleReminder(context, title, date.timeInMillis)
+                    Toast.makeText(context, "Reminder scheduled successfully", Toast.LENGTH_SHORT)
+                        .show()
+                    onClosed()
+                }
+            }
+        }
+    }
+
+    if (showDateDialog) {
+        selectDate(context) {
+            date.time = it
+            isDateSelected = true
+            showDateDialog = false
+        }
+    }
+
+    if (showTimeDialog) {
+        selectTime(context) { hour, minute ->
+            date.set(Calendar.HOUR_OF_DAY, hour)
+            date.set(Calendar.MINUTE, minute)
+            date.set(Calendar.SECOND, 0)
+
+            isTimeSelected = true
+            showTimeDialog = false
+        }
     }
 }
 

@@ -18,12 +18,12 @@ import com.app.ultraplus.ui.theme.AppTheme
 fun AppButton(modifier: Modifier = Modifier, text: String, isLoading: Boolean = false, onClick: () -> Unit) {
     val indicatorHeight by animateFloatAsState(targetValue = if (isLoading) 10f else 0f)
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(shape = AppTheme.shapes.medium)
     ) {
         Button(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             onClick = onClick,
             shape = AppTheme.shapes.medium,
             colors = ButtonDefaults.buttonColors(
