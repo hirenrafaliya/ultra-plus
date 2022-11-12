@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "1014225827051",
-    "project_id": "ultra-plus---production",
-    "storage_bucket": "ultra-plus---production.appspot.com"
+    "project_number": "732451475505",
+    "project_id": "ultra-plus---staging",
+    "storage_bucket": "ultra-plus---staging.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1014225827051:android:f56216e8db5ffe57c17aae",
+        "mobilesdk_app_id": "1:732451475505:android:2b9da435094f7451948510",
         "android_client_info": {
           "package_name": "com.app.ultraplus"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1014225827051-4q16tgncf8qnqo7kqdcnr2l54kvb6m9j.apps.googleusercontent.com",
+          "client_id": "732451475505-b82jsruro1i0o65fi3ss5s2deq8e6396.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD5m-bEQs0h4nwntXYqU1gXYNGBvDtBccI"
+          "current_key": "AIzaSyCZAT9qKmhsjxLWU6vWvyTZUL4JlXLLFao"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1014225827051-4q16tgncf8qnqo7kqdcnr2l54kvb6m9j.apps.googleusercontent.com",
+              "client_id": "732451475505-b82jsruro1i0o65fi3ss5s2deq8e6396.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
