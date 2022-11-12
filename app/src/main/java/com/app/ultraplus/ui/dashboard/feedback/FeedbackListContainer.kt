@@ -2,17 +2,13 @@ package com.app.ultraplus.ui.dashboard.feedback
 
 import android.view.animation.CycleInterpolator
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.Icon
@@ -58,6 +54,8 @@ fun FeedbackListContainer(
     val user by remember { mutableStateOf(UserPref.getUser()) }
     val context = LocalContext.current
     var showReminderDialog by remember { mutableStateOf(false) }
+    val managers = remember { mutableStateListOf<Pair<String, String>>() }
+    var selectedManagerId = remember { mutableStateListOf<String>() }
 
     val onClickReminder: () -> Unit = {
         showReminderDialog = true
@@ -66,6 +64,14 @@ fun FeedbackListContainer(
     LaunchedEffect(Unit) {
         viewModel.getFeedbacks(onSuccess = {
             viewModel.feedbacks = it
+            managers.clear()
+            it.map {
+                Pair(it.createdBy, it.userName)
+            }.forEach {
+                if (!managers.contains(it)) {
+                    managers.add(it)
+                }
+            }
         }, onFailure = {
             Toast.makeText(context, "Error 703 : $it", Toast.LENGTH_SHORT).show()
         })
@@ -140,7 +146,61 @@ fun FeedbackListContainer(
                     Spacer(space = ItemPaddings.xxSmall)
                 }
             }
-            feedbackList(feedbacks = viewModel.feedbacks, onClick = {
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(vertical = Paddings.xSmall)
+                ) {
+                    AnimatedVisibility(selectedManagerId.isNotEmpty()) {
+                        Text(
+                            modifier = Modifier
+                                .background(
+                                    AppTheme.colors.LightBluePrimary,
+                                    AppTheme.shapes.medium
+                                )
+                                .clickable {
+                                    selectedManagerId.clear()
+                                }
+                                .padding(Paddings.xSmall),
+                            text = "Clear",
+                            style = AppTheme.typography.regular12,
+                            color = AppTheme.colors.BluePrimary
+                        )
+                        Spacer(space = 8)
+                    }
+
+                    managers.forEach {
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = Paddings.xSmall)
+                                .background(
+                                    if (selectedManagerId.contains(it.first)) AppTheme.colors.BluePrimary else AppTheme.colors.LightBluePrimary,
+                                    AppTheme.shapes.medium
+                                )
+                                .clickable {
+                                    if (selectedManagerId.contains(it.first)) selectedManagerId.remove(
+                                        it.first
+                                    )
+                                    else selectedManagerId.add(it.first)
+                                }
+                                .padding(Paddings.xSmall),
+                            text = it.second,
+                            style = AppTheme.typography.regular12,
+                            color = if (selectedManagerId.contains(it.first)) AppTheme.colors.WhitePrimary else AppTheme.colors.BluePrimary
+                        )
+                    }
+                }
+            }
+
+
+            feedbackList(feedbacks = viewModel.feedbacks.filter { feedback ->
+                if (selectedManagerId.isNotEmpty()) {
+                    selectedManagerId.contains(feedback.createdBy)
+                } else true
+            }, onClick = {
                 viewModel.selectedFeedback = it
                 navHostController.navigate(Screen.FeedbackDetailScreen.route)
             })
@@ -160,7 +220,7 @@ fun FeedbackListContainer(
 
     if (showReminderDialog) {
         Dialog(onDismissRequest = { showReminderDialog = false }) {
-            ReminderDialog{
+            ReminderDialog {
                 showReminderDialog = false
             }
         }
@@ -168,7 +228,7 @@ fun FeedbackListContainer(
 }
 
 @Composable
-fun ReminderDialog(onClosed:()->Unit) {
+fun ReminderDialog(onClosed: () -> Unit) {
     var title by remember { mutableStateOf("") }
     var showDateDialog by remember { mutableStateOf(false) }
     var showTimeDialog by remember { mutableStateOf(false) }
