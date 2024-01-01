@@ -1,5 +1,6 @@
 package com.app.ultraplus.ui.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,6 +55,7 @@ fun LoginScreenPreview(navHostController: NavHostController, viewModel: AuthView
             isLoading = true
             viewModel.loginUser(number = number, password = password, onSuccess = {
                 isLoading = false
+                Log.d("TAGER", "LoginScreenPreview: $it")
                 if(it.status == UserStatus.INACTIVE.text) {
                     Toast.makeText(context, "Status INACTIVE : Ask your admin to activate your account", Toast.LENGTH_LONG).show()
                     return@loginUser
